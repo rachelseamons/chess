@@ -57,4 +57,19 @@ public class ChessBoard {
     public ChessPiece at(ChessPosition position) {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
+
+    /**
+     * helper function for resetBoard
+     * adds rooks in their starting positions
+     */
+    private void addRooks() {
+        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+
+        board[0][0] = whiteRook;
+        board[0][7] = whiteRook;
+
+        board[7][0] = blackRook;
+        board[7][7] = blackRook;
+    }
 }
