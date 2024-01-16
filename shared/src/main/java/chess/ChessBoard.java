@@ -1,5 +1,8 @@
 package chess;
 
+import java.util.Arrays;
+import java.util.Objects;
+
 /**
  * A chessboard that can hold and rearrange chess pieces.
  * <p>
@@ -69,8 +72,8 @@ public class ChessBoard {
      * adds rooks in starting positions
      */
     private void addRooks() {
-        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
-        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
 
         board[0][0] = whiteRook;
         board[0][7] = whiteRook;
@@ -133,5 +136,21 @@ public class ChessBoard {
             board[1][i] = whitePawn;
             board[6][i] = blackPawn;
         }
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ChessBoard that = (ChessBoard) object;
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            for (int j = 0; j < BOARD_HEIGHT; j++) {
+                if (!(this.board[i][j] == null) && !(that.board[i][j] == null)
+                        && !this.board[i][j].equals(that.board[i][j])) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

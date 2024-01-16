@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -34,6 +35,14 @@ public class ChessPiece {
      */
     public ChessGame.TeamColor getTeamColor() {
         return color;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ChessPiece piece = (ChessPiece) object;
+        return color == piece.color && type == piece.type;
     }
 
     /**
