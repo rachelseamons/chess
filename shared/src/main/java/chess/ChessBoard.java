@@ -7,9 +7,12 @@ package chess;
  * signature of the existing methods.
  */
 public class ChessBoard {
+    private final int BOARD_HEIGHT = 8;
+    private final int BOARD_WIDTH = 8;
+    private ChessPiece[][] board = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -19,7 +22,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        throw new RuntimeException("Not implemented");
+        board[position.getRow()-1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -30,7 +33,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        throw new RuntimeException("Not implemented");
+        return at(position);
     }
 
     /**
@@ -38,6 +41,20 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        //emptying board
+        for (int i = 0; i < BOARD_HEIGHT; i++) {
+            for (int j = 0; j < BOARD_WIDTH; j++) {
+                board[i][j] = null;
+            }
+        }
+    }
+
+    /**
+     * returns the ChessPiece object from the board at a ChessPosition
+     * @param position the position to get the piece from
+     * @return Either the piece at the position or null if there is no piece
+     */
+    public ChessPiece at(ChessPosition position) {
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 }
