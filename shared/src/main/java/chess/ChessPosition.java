@@ -61,6 +61,9 @@ public class ChessPosition {
         return new ChessPosition(row, col + 1);
     }
 
+    /**
+     * @return a boolean indicating if position is on board
+     */
     public boolean onBoard() {
         if (row > 0 && row < 9) {
             return col > 0 && col < 9;
