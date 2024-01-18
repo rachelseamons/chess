@@ -11,13 +11,18 @@ import java.util.Objects;
 public class ChessMove {
     private ChessPosition start;
     private ChessPosition end;
-    private ChessPiece.PieceType promote;
+    private ChessPiece.PieceType promote = null;
 
     public ChessMove(ChessPosition startPosition, ChessPosition endPosition,
                      ChessPiece.PieceType promotionPiece) {
         start = startPosition;
         end = endPosition;
         promote = promotionPiece;
+    }
+
+    public ChessMove(ChessPosition startPosition, ChessPosition endPosition) {
+        start = startPosition;
+        end = endPosition;
     }
 
     /**
