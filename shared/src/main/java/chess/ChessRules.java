@@ -180,7 +180,7 @@ public class ChessRules {
         Set<ChessMove> possible = new HashSet<>();
         ChessPosition test = startPosition;
 
-        while (repeatable) {
+        do {
             test = moveDirection(test, direction);
 
             if (!test.onBoard()) {
@@ -193,7 +193,7 @@ public class ChessRules {
             } else {
                 repeatable = false;
             }
-        }
+        } while (repeatable);
         return possible;
     }
 
