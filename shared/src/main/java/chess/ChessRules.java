@@ -160,9 +160,18 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> moveQueen(ChessPosition startPosition) {
+    private Set<ChessMove> moveQueen(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
+
         repeatable = true;
+        possible.addAll(straightLine(start, direction.N));
+        possible.addAll(straightLine(start, direction.NW));
+        possible.addAll(straightLine(start, direction.W));
+        possible.addAll(straightLine(start, direction.SW));
+        possible.addAll(straightLine(start, direction.S));
+        possible.addAll(straightLine(start, direction.SE));
+        possible.addAll(straightLine(start, direction.E));
+        possible.addAll(straightLine(start, direction.NE));
 
         return possible;
     }
@@ -201,6 +210,8 @@ public class ChessRules {
                 repeatable = false;
             }
         } while (repeatable);
+
+        repeatable = true;
         return possible;
     }
 
