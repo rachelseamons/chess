@@ -43,20 +43,70 @@ public class ChessRules {
         //move one space forward for black
         ChessPosition endPosition = startPosition.decrementRow();
         if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && endPosition.onBoard() && board.at(endPosition) == null) {
-            currMove = new ChessMove(startPosition, endPosition);
-            possible.add(currMove);
+            if (endPosition.getRow() == 1) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                currMove = new ChessMove(startPosition, endPosition);
+                possible.add(currMove);
+            }
         }
 
         //move one space forward for white
         endPosition = startPosition.incrementRow();
         if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && endPosition.onBoard() && board.at(endPosition) == null) {
-            possible.add(currMove);
+            if (endPosition.getRow() == 8) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                currMove = new ChessMove(startPosition, endPosition);
+                possible.add(currMove);
+            }
         }
 
         //add captures
         possible.addAll(pawnCapture(startPosition));
 
+        //add double move from initial positions
+        if ((piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 7)
+                || (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 2)) {
+            possible.add(pawnInitial(startPosition));
+        }
+
+        //add promotions
+
         return possible;
+    }
+
+    private Set<ChessMove> promotePawn(ChessPosition startPosition, ChessPosition endPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+
+        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN);
+        possible.add(currMove);
+        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT);
+        possible.add(currMove);
+        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP);
+        possible.add(currMove);
+        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK);
+        possible.add(currMove);
+
+        return possible;
+    }
+
+    private ChessMove pawnInitial(ChessPosition startPosition) {
+        var endPosition = startPosition;
+        var testBlocked = startPosition;
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            testBlocked = startPosition.decrementRow();
+            endPosition = testBlocked.decrementRow();
+        } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            testBlocked = startPosition.incrementRow();
+            endPosition = testBlocked.incrementRow();
+        }
+
+        if (endPosition.onBoard() && board.at(endPosition) == null && board.at(testBlocked) == null) {
+            return new ChessMove(startPosition, endPosition);
+        }
+        return null;
     }
 
     private Set<ChessMove> pawnCapture(ChessPosition startPosition) {
@@ -73,15 +123,23 @@ public class ChessRules {
         //check right
         ChessPosition test = endPosition.incrementCol();
         if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
-            currMove = new ChessMove(startPosition, test);
-            possible.add(currMove);
+            if (endPosition.getRow() == 1) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                currMove = new ChessMove(startPosition, endPosition);
+                possible.add(currMove);
+            }
         }
 
         //check left
         test = endPosition.decrementCol();
         if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
-            currMove = new ChessMove(startPosition, test);
-            possible.add(currMove);
+            if (endPosition.getRow() == 8) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                currMove = new ChessMove(startPosition, endPosition);
+                possible.add(currMove);
+            }
         }
 
         return possible;
