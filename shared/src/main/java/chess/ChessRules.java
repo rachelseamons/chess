@@ -146,9 +146,14 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> moveRook(ChessPosition startPosition) {
+    private Set<ChessMove> moveRook(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
         repeatable = true;
+
+        possible.addAll(straightLine(start, direction.N));
+        possible.addAll(straightLine(start, direction.W));
+        possible.addAll(straightLine(start, direction.S));
+        possible.addAll(straightLine(start, direction.E));
 
         return possible;
     }
