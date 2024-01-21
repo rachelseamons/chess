@@ -38,7 +38,6 @@ public class ChessRules {
 
     private Set<ChessMove> movePawn(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
-        currMove = new ChessMove(startPosition, startPosition);
 
         //move one space forward for black
         ChessPosition endPosition = startPosition.decrementRow();
@@ -46,8 +45,7 @@ public class ChessRules {
             if (endPosition.getRow() == 1) {
                 possible.addAll(promotePawn(startPosition, endPosition));
             } else {
-                currMove = new ChessMove(startPosition, endPosition);
-                possible.add(currMove);
+                possible.add(new ChessMove(startPosition, endPosition));
             }
         }
 
@@ -57,8 +55,7 @@ public class ChessRules {
             if (endPosition.getRow() == 8) {
                 possible.addAll(promotePawn(startPosition, endPosition));
             } else {
-                currMove = new ChessMove(startPosition, endPosition);
-                possible.add(currMove);
+                possible.add(new ChessMove(startPosition, endPosition));
             }
         }
 
@@ -68,7 +65,7 @@ public class ChessRules {
         //add double move from initial positions
         if ((piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 7)
                 || (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 2)) {
-            possible.add(pawnInitial(startPosition));
+            possible.addAll(pawnInitial(startPosition));
         }
 
         //add promotions
@@ -79,19 +76,16 @@ public class ChessRules {
     private Set<ChessMove> promotePawn(ChessPosition startPosition, ChessPosition endPosition) {
         Set<ChessMove> possible = new HashSet<>();
 
-        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN);
-        possible.add(currMove);
-        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT);
-        possible.add(currMove);
-        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP);
-        possible.add(currMove);
-        currMove = new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK);
-        possible.add(currMove);
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
 
         return possible;
     }
 
-    private ChessMove pawnInitial(ChessPosition startPosition) {
+    private Set<ChessMove> pawnInitial(ChessPosition startPosition) {
+        Set<ChessMove> possible = new HashSet<>();
         var endPosition = startPosition;
         var testBlocked = startPosition;
 
@@ -104,9 +98,9 @@ public class ChessRules {
         }
 
         if (endPosition.onBoard() && board.at(endPosition) == null && board.at(testBlocked) == null) {
-            return new ChessMove(startPosition, endPosition);
+            possible.add(new ChessMove(startPosition, endPosition));
         }
-        return null;
+        return possible;
     }
 
     private Set<ChessMove> pawnCapture(ChessPosition startPosition) {
