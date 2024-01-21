@@ -4,8 +4,6 @@ import javax.swing.text.html.HTML;
 import java.util.HashSet;
 import java.util.Set;
 
-import static chess.ChessRules.direction.*;
-
 public class ChessRules {
     private final ChessBoard board;
     private ChessPiece piece;
@@ -198,24 +196,25 @@ public class ChessRules {
     }
 
     private ChessPosition moveDirection(ChessPosition start, direction direction) {
-
-        if (direction == N) {
+        if (direction == ChessRules.direction.N) {
             return start.incrementRow();
-        } else if (direction == NE) {
+        } else if (direction == ChessRules.direction.NE) {
             return start.incrementRow().incrementCol();
-        } else if (direction == E) {
+        } else if (direction == ChessRules.direction.E) {
             return start.incrementCol();
-        } else if (direction == SE) {
+        } else if (direction == ChessRules.direction.SE) {
             return start.decrementRow().incrementCol();
-        } else if (direction == S) {
+        } else if (direction == ChessRules.direction.S) {
             return start.decrementRow();
-        } else if (direction == SW) {
+        } else if (direction == ChessRules.direction.SW) {
             return start.decrementRow().decrementCol();
-        } else if (direction == W) {
+        } else if (direction == ChessRules.direction.W) {
             return start.decrementCol();
-        } else if (direction == NW) {
+        } else if (direction == ChessRules.direction.NW) {
             return start.incrementRow().decrementCol();
         }
+
+        return start;
     }
 
     private enum direction {
