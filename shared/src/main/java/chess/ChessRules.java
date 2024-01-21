@@ -7,7 +7,6 @@ import java.util.Set;
 public class ChessRules {
     private final ChessBoard board;
     private ChessPiece piece;
-    private ChessMove currMove;
     private boolean repeatable = true;
 
     public ChessRules(ChessBoard board, ChessPiece piece) {
@@ -107,7 +106,6 @@ public class ChessRules {
     private Set<ChessMove> pawnCapture(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
         var endPosition = startPosition;
-        var currMove = new ChessMove(startPosition, endPosition);
 
         if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
             endPosition = startPosition.incrementRow();
@@ -121,8 +119,7 @@ public class ChessRules {
             if (test.getRow() == 1 || test.getRow() == 8) {
                 possible.addAll(promotePawn(startPosition, test));
             } else {
-                currMove = new ChessMove(startPosition, test);
-                possible.add(currMove);
+                possible.add(new ChessMove(startPosition, test));
             }
         }
 
@@ -132,8 +129,7 @@ public class ChessRules {
             if (test.getRow() == 1 || test.getRow() == 8) {
                 possible.addAll(promotePawn(startPosition, test));
             } else {
-                currMove = new ChessMove(startPosition, test);
-                possible.add(currMove);
+                possible.add(new ChessMove(startPosition, test));
             }
         }
 
