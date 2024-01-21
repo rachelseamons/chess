@@ -167,16 +167,25 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> moveKing(ChessPosition startPosition) {
+    private Set<ChessMove> moveKing(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
         repeatable = false;
+
+        possible.addAll(straightLine(start, direction.N));
+        possible.addAll(straightLine(start, direction.NW));
+        possible.addAll(straightLine(start, direction.W));
+        possible.addAll(straightLine(start, direction.SW));
+        possible.addAll(straightLine(start, direction.S));
+        possible.addAll(straightLine(start, direction.SE));
+        possible.addAll(straightLine(start, direction.E));
+        possible.addAll(straightLine(start, direction.NE));
 
         return possible;
     }
 
-    private Set<ChessMove> straightLine(ChessPosition startPosition, direction direction) {
+    private Set<ChessMove> straightLine(ChessPosition start, direction direction) {
         Set<ChessMove> possible = new HashSet<>();
-        ChessPosition test = startPosition;
+        ChessPosition test = start;
 
         do {
             test = moveDirection(test, direction);
@@ -184,9 +193,9 @@ public class ChessRules {
             if (!test.onBoard()) {
                 repeatable = false;
             } else if (board.at(test) == null) {
-                possible.add(new ChessMove(startPosition, test));
+                possible.add(new ChessMove(start, test));
             } else if (board.at(test).getTeamColor() != piece.getTeamColor()) {
-                possible.add(new ChessMove(startPosition, test));
+                possible.add(new ChessMove(start, test));
                 repeatable = false;
             } else {
                 repeatable = false;
