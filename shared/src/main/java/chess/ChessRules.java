@@ -123,10 +123,10 @@ public class ChessRules {
         //check right
         ChessPosition test = endPosition.incrementCol();
         if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
-            if (endPosition.getRow() == 1) {
-                possible.addAll(promotePawn(startPosition, endPosition));
+            if (test.getRow() == 1 || test.getRow() == 8) {
+                possible.addAll(promotePawn(startPosition, test));
             } else {
-                currMove = new ChessMove(startPosition, endPosition);
+                currMove = new ChessMove(startPosition, test);
                 possible.add(currMove);
             }
         }
@@ -134,10 +134,10 @@ public class ChessRules {
         //check left
         test = endPosition.decrementCol();
         if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
-            if (endPosition.getRow() == 8) {
-                possible.addAll(promotePawn(startPosition, endPosition));
+            if (test.getRow() == 1 || test.getRow() == 8) {
+                possible.addAll(promotePawn(startPosition, test));
             } else {
-                currMove = new ChessMove(startPosition, endPosition);
+                currMove = new ChessMove(startPosition, test);
                 possible.add(currMove);
             }
         }
