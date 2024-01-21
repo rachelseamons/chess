@@ -1,7 +1,10 @@
 package chess;
 
+import javax.swing.text.html.HTML;
 import java.util.HashSet;
 import java.util.Set;
+
+import static chess.ChessRules.direction.*;
 
 public class ChessRules {
     private final ChessBoard board;
@@ -139,33 +142,83 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> moveRook(ChessPosition startPosition) {
-        Set<ChessMove> possible = new HashSet<>();
-
-        return possible;
-    }
-
     private Set<ChessMove> moveKnight(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
 
         return possible;
     }
 
+    private Set<ChessMove> moveRook(ChessPosition startPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
+
+        return possible;
+    }
+
     private Set<ChessMove> moveBishop(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
 
         return possible;
     }
 
     private Set<ChessMove> moveQueen(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
 
         return possible;
     }
 
     private Set<ChessMove> moveKing(ChessPosition startPosition) {
         Set<ChessMove> possible = new HashSet<>();
+        repeatable = false;
 
         return possible;
+    }
+
+    private Set<ChessMove> straightLine(ChessPosition startPosition, direction direction) {
+        Set<ChessMove> possible = new HashSet<>();
+        ChessPosition test = startPosition;
+
+        while (repeatable) {
+            test = moveDirection(test, direction);
+
+            if (!test.onBoard()) {
+                repeatable = false;
+            } else if (board.at(test) == null) {
+                possible.add(new ChessMove(startPosition, test));
+            } else if (board.at(test).getTeamColor() != piece.getTeamColor()) {
+                possible.add(new ChessMove(startPosition, test));
+                repeatable = false;
+            } else {
+                repeatable = false;
+            }
+        }
+        return possible;
+    }
+
+    private ChessPosition moveDirection(ChessPosition start, direction direction) {
+
+        if (direction == N) {
+            return start.incrementRow();
+        } else if (direction == NE) {
+            return start.incrementRow().incrementCol();
+        } else if (direction == E) {
+            return start.incrementCol();
+        } else if (direction == SE) {
+            return start.decrementRow().incrementCol();
+        } else if (direction == S) {
+            return start.decrementRow();
+        } else if (direction == SW) {
+            return start.decrementRow().decrementCol();
+        } else if (direction == W) {
+            return start.decrementCol();
+        } else if (direction == NW) {
+            return start.incrementRow().decrementCol();
+        }
+    }
+
+    private enum direction {
+        N, NE, E, SE, S, SW, W, NW;
     }
 }
