@@ -27,11 +27,8 @@ public class ChessRules {
         if (piece.getPieceType() == ChessPiece.PieceType.BISHOP) {
             return moveBishop(startPosition);
         }
-        if (piece.getPieceType() == ChessPiece.PieceType.QUEEN) {
-            return moveQueen(startPosition);
-        }
-        if (piece.getPieceType() == ChessPiece.PieceType.KING) {
-            return moveKing(startPosition);
+        if (piece.getPieceType() == ChessPiece.PieceType.QUEEN || piece.getPieceType() == ChessPiece.PieceType.KING) {
+            return moveRoyalty(startPosition);
         }
         return new HashSet<>();
     }
@@ -189,24 +186,9 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> moveQueen(ChessPosition start) {
+    private Set<ChessMove> moveRoyalty(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
         repeatable = true;
-
-        possible.addAll(straightLine(start, direction.N));
-        possible.addAll(straightLine(start, direction.NW));
-        possible.addAll(straightLine(start, direction.W));
-        possible.addAll(straightLine(start, direction.SW));
-        possible.addAll(straightLine(start, direction.S));
-        possible.addAll(straightLine(start, direction.SE));
-        possible.addAll(straightLine(start, direction.E));
-        possible.addAll(straightLine(start, direction.NE));
-
-        return possible;
-    }
-
-    private Set<ChessMove> moveKing(ChessPosition start) {
-        Set<ChessMove> possible = new HashSet<>();
 
         possible.addAll(straightLine(start, direction.N));
         possible.addAll(straightLine(start, direction.NW));
