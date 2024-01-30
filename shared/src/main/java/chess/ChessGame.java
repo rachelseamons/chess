@@ -84,8 +84,26 @@ public class ChessGame {
         throw new RuntimeException("Not implemented");
     }
 
+    /**
+     * checks if a move will enter check
+     *
+     * @param move chess move to test
+     * @return if move doesn't enter check
+     */
     public boolean notEnterCheck(ChessMove move) {
-        
+        ChessBoard testBoard = board.copy();
+        ChessPiece piece = testBoard.at(move.getStartPosition());
+
+        //execute move on testBoard
+        if (testBoard.at(move.getEndPosition()) == null
+                || testBoard.at(move.getEndPosition()).getTeamColor() != piece.getTeamColor()) {
+            testBoard.addPiece(move.getEndPosition(), piece);
+            testBoard.removePiece(move.getStartPosition());
+        }
+
+        //check if in check
+        ChessRules testCheck = new ChessRules(testBoard, null);
+        return !testCheck.isInCheck(piece.getTeamColor());
     }
 
     /**

@@ -250,6 +250,10 @@ public class ChessRules {
         return start;
     }
 
+    public boolean isInCheck(ChessGame.TeamColor teamColor) {
+
+    }
+
     private enum direction {
         N, NE, E, SE, S, SW, W, NW;
     }

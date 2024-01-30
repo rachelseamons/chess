@@ -25,7 +25,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn() - 1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -37,6 +37,10 @@ public class ChessBoard {
      */
     public ChessPiece getPiece(ChessPosition position) {
         return at(position);
+    }
+
+    public void removePiece(ChessPosition position) {
+        board[position.getRow() - 1][position.getColumn() - 1] = null;
     }
 
     /**
@@ -60,6 +64,7 @@ public class ChessBoard {
 
     /**
      * returns the ChessPiece object from the board at a ChessPosition
+     *
      * @param position the position to get the piece from
      * @return Either the piece at the position or null if there is no piece
      */
@@ -107,6 +112,7 @@ public class ChessBoard {
         board[7][2] = blackBishop;
         board[7][5] = blackBishop;
     }
+
     /**
      * helper function for resetBoard
      * adds kings and queens in starting positions
@@ -152,5 +158,17 @@ public class ChessBoard {
             }
         }
         return true;
+    }
+
+    public ChessBoard copy() {
+        ChessBoard copy = new ChessBoard();
+
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            for (int j = 0; j < BOARD_HEIGHT; j++) {
+                copy.board[i][j] = this.board[i][j];
+            }
+        }
+
+        return copy;
     }
 }
