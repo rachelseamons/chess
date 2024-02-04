@@ -167,7 +167,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ChessRules testCheck = new ChessRules(board, null);
+        return testCheck.isInCheck(teamColor);
     }
 
     /**
@@ -177,7 +178,27 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+        //get all valid moves for team
+        Set<ChessMove> possibleMoves = new HashSet<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition test = new ChessPosition(i, j);
+                if (board.at(test) != null && board.at(test).getTeamColor() == turn) {
+                    possibleMoves.addAll(validMoves(test));
+                }
+            }
+        }
+
+        //if there are any valid moves, then not in checkmate
+        if (possibleMoves.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
