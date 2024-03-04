@@ -1,44 +1,49 @@
-package dataAccess;
+package service;
 
-import chess.ChessGame;
+import dataAccess.DataAccess;
+import dataAccess.DataAccessException;
+import dataAccess.User;
 
+import javax.xml.crypto.Data;
 import java.util.Collection;
-import java.util.HashMap;
 
-public class DataAccessMemory implements DataAccess {
-    private HashMap<Integer, ChessGame> games = new HashMap<>();
+public class ChessService {
+    DataAccess dataAccess;
 
-    @Override
-    public void clear() throws DataAccessException {
-        games.clear();
+    public ChessService(DataAccess dataAccess) {
+        this.dataAccess = dataAccess;
     }
 
-    @Override
+    public void clear() throws DataAccessException {
+
+    }
+
+
     public String registerUser(User user) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public String login(String username, String password) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public boolean logout(String authToken) throws DataAccessException {
         return false;
     }
 
-    @Override
+
     public Collection<String> listGames(String authToken) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public String createGame(String authToken, String gameName) throws DataAccessException {
         return null;
     }
 
-    @Override
+
     public String joinGame(String authToken, String playerColor, String gameID) throws DataAccessException {
         return null;
     }
