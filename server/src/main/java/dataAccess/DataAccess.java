@@ -9,7 +9,7 @@ public interface DataAccess {
 
     void createUser(User user);
 
-    Integer login(String username);
+    Integer login(String username) throws DataAccessException;
 
     boolean verifyUser(String username, String password);
 }

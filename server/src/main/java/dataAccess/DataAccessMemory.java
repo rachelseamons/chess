@@ -40,16 +40,21 @@ public class DataAccessMemory implements DataAccess {
     }
 
     @Override
-    public Integer login(String username) {
+    public Integer login(String username) throws DataAccessException {
         //finding next available authToken
-        //TODO::when removing from auth, set currAuthToken to the removed authToken
+        //TODO::when removing from auth, set currAuthToken to the removed authToken and user authToken to null
         while (auth.get(currAuthToken) != null) {
             currAuthToken++;
         }
 
         if (users.get(username) != null && users.get(username).getAuthToken() != null) {
-            users.get(username).setAuthToken(currAuthToken);
-            return currAuthToken;
+            var authToken = users.get(username).getAuthToken();
+            //this should indicate a user who's already logged in, so make sure they're in auth
+            //and return their old authToken
+            if (auth.get(authToken) == null) {
+                throw new DataAccessException("Error: description");
+            }
+            return users.get(username).getAuthToken();
         }
 
         auth.put(currAuthToken, username);

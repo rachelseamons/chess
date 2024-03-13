@@ -75,4 +75,30 @@ class ChessServiceTest {
         service.registerUser(fred);
         assertDoesNotThrow(() -> service.login("Fred", "pass"));
     }
+
+    @Test
+    @DisplayName("Login in Non-existing User")
+    void nonexistentLogin() throws DataAccessException {
+        Exception exception = assertThrows(DataAccessException.class, () ->
+                service.login("Fred", "pass"));
+
+        String expectedMessage = "Error: unauthorized";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    @DisplayName("Wrong Password")
+    void wrongPassword() throws DataAccessException {
+        service.registerUser(new User("Fred", "pass"));
+
+        Exception exception = assertThrows(DataAccessException.class, () ->
+                service.login("Fred", "Password"));
+
+        String expectedMessage = "Error: unauthorized";
+        String actualMessage = exception.getMessage();
+
+        assertEquals(expectedMessage, actualMessage);
+    }
 }
