@@ -2,11 +2,9 @@ package service;
 
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessMemory;
+import model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import server.Server;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ChessServiceTest {
 
@@ -25,6 +23,8 @@ class ChessServiceTest {
     }
 
     @Test
-    void registerUser() {
+    void registerUser() throws DataAccessException {
+        var user = new User("Fred", "x");
+        service.registerUser(user);
     }
 }

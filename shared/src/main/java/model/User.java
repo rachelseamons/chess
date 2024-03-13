@@ -1,4 +1,6 @@
-package dataAccess;
+package model;
+
+import java.util.Objects;
 
 public class User {
     String username;
@@ -23,5 +25,17 @@ public class User {
 
     public boolean verifyPassword(String password) {
         return password.equals(this.password);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (!(object instanceof User user)) return false;
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, password);
     }
 }

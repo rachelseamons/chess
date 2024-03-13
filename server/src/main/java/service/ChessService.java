@@ -2,9 +2,8 @@ package service;
 
 import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
-import dataAccess.User;
+import model.User;
 
-import javax.xml.crypto.Data;
 import java.util.Collection;
 
 public class ChessService {
@@ -15,12 +14,14 @@ public class ChessService {
     }
 
     public void clear() throws DataAccessException {
-
+        dataAccess.clear();
     }
 
 
     public String registerUser(User user) throws DataAccessException {
-        return null;
+        dataAccess.registerUser(user);
+
+        return "";
     }
 
 

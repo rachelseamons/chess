@@ -1,45 +1,44 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 
 public class DataAccessMemory implements DataAccess {
     private HashMap<Integer, ChessGame> games = new HashMap<>();
+    private HashMap<String, User> users = new HashMap<>();
+    private HashMap<Integer, String> auth = new HashMap<>();
+    private int currAuthToken = 0;
 
     @Override
     public void clear() throws DataAccessException {
-        games.clear();
+
     }
 
     @Override
-    public String registerUser(User user) throws DataAccessException {
-        return null;
+    public boolean userExists(String username) {
+        if (users.get(username) == null) {
+            return false;
+        } else return true;
     }
 
     @Override
-    public String login(String username, String password) throws DataAccessException {
-        return null;
+    public void createUser(String username, String password) {
+        var user = new User(username, password);
+        users.put(username, user);
     }
 
     @Override
-    public boolean logout(String authToken) throws DataAccessException {
-        return false;
-    }
+    public Integer login(String username) {
+        //finding next available authToken
+        //TODO::when removing from auth, set currAuthToken to the removed authToken
+        while (auth.get(currAuthToken) != null) {
+            currAuthToken++;
+        }
 
-    @Override
-    public Collection<String> listGames(String authToken) throws DataAccessException {
-        return null;
-    }
-
-    @Override
-    public String createGame(String authToken, String gameName) throws DataAccessException {
-        return null;
-    }
-
-    @Override
-    public String joinGame(String authToken, String playerColor, String gameID) throws DataAccessException {
-        return null;
+        auth.put(currAuthToken, username);
+        return currAuthToken;
     }
 }
