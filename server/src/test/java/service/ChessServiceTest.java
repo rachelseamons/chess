@@ -32,7 +32,7 @@ class ChessServiceTest {
     }
 
     @Test
-    @DisplayName("Register Pre-existing User")
+    @DisplayName("Fail to Register Pre-existing User")
     void badRegister() throws DataAccessException {
         var fred = new User("Fred", "pass", "@gmail");
 
@@ -44,5 +44,17 @@ class ChessServiceTest {
         String actualMessage = exception.getMessage();
 
         assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    @DisplayName("Clear Database")
+    void clear() throws DataAccessException {
+        var fred = new User("Fred", "pass", "@gmail");
+        var carl = new User("Carl", "pass", "@gmail");
+
+        service.registerUser(fred);
+        service.registerUser(carl);
+
+        assertDoesNotThrow(() -> service.clear());
     }
 }
