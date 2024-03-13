@@ -24,7 +24,9 @@ class ChessServiceTest {
 
     @Test
     void registerUser() throws DataAccessException {
-        var user = new User("Fred", "x");
-        service.registerUser(user);
+        var username = "Fred";
+        var password = "pass";
+        var email = "@fred";
+        service.registerUser(new User(username, password, email));
     }
 }

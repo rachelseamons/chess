@@ -5,10 +5,12 @@ import java.util.Objects;
 public class User {
     String username;
     String password;
+    String email;
 
-    public User(String username, String password) {
+    public User(String username, String password, String email) {
         this.username = username;
         this.password = password;
+        this.email = email;
     }
 
     public void setUsername(String username) {
@@ -31,11 +33,11 @@ public class User {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (!(object instanceof User user)) return false;
-        return Objects.equals(username, user.username) && Objects.equals(password, user.password);
+        return Objects.equals(username, user.username) && Objects.equals(password, user.password) && Objects.equals(email, user.email);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, password);
+        return Objects.hash(username, password, email);
     }
 }

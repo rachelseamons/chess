@@ -18,10 +18,18 @@ public class ChessService {
     }
 
 
-    public String registerUser(User user) throws DataAccessException {
-        dataAccess.registerUser(user);
+    public Integer registerUser(User user) throws DataAccessException {
+        //test if user already exists
+        if (dataAccess.userExists(user)) {
+            throw new DataAccessException("Error: already exists");
+        }
 
-        return "";
+        dataAccess.createUser(user);
+
+        var username = user.getUsername();
+        var authToken = dataAccess.login(username);
+
+        return authToken;
     }
 
 

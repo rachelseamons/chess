@@ -1,11 +1,13 @@
 package dataAccess;
 
+import model.User;
+
 public interface DataAccess {
     void clear() throws DataAccessException;
 
-    boolean userExists(String username);
+    boolean userExists(User user);
 
-    void createUser(String username, String password);
+    void createUser(User user);
 
     Integer login(String username);
 }

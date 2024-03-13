@@ -14,19 +14,28 @@ public class DataAccessMemory implements DataAccess {
 
     @Override
     public void clear() throws DataAccessException {
+        games.clear();
+        users.clear();
+        auth.clear();
 
+        if (!games.isEmpty() || !users.isEmpty() || !auth.isEmpty()) {
+            throw new DataAccessException("Error: description");
+        }
     }
 
     @Override
-    public boolean userExists(String username) {
+    public boolean userExists(User user) {
+        String username = user.getUsername();
         if (users.get(username) == null) {
             return false;
-        } else return true;
+        } else if (users.get(username).equals(user)) {
+            return true;
+        } else return false;
     }
 
     @Override
-    public void createUser(String username, String password) {
-        var user = new User(username, password);
+    public void createUser(User user) {
+        String username = user.getUsername();
         users.put(username, user);
     }
 
