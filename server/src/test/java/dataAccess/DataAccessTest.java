@@ -30,22 +30,44 @@ class DataAccessTest {
 
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
-    @DisplayName("Clear Database")
-    void clear(Class<? extends DataAccess> dbClass) throws DataAccessException {
+    @DisplayName("Login")
+    void login(Class<? extends DataAccess> dbClass) throws DataAccessException {
         var dataAccess = getDataAccess(dbClass);
 
+        assertDoesNotThrow(() -> dataAccess.login("Fred"));
+        assertNotNull(dataAccess.login("Fred"));
     }
 
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
     @DisplayName("User Exists")
     void userExists(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+
+        var fred = new User("Fred", "pass", "@gmail");
+        var carl = new User("Carl", "pass", "@yahoo");
+        var alex = new User("Alex", "pass", "@gmail");
+
+        dataAccess.createUser(fred);
+        dataAccess.createUser(carl);
+        dataAccess.createUser(alex);
+
+        assertTrue(dataAccess.userExists(fred));
+        assertTrue(dataAccess.userExists(carl));
+        assertTrue(dataAccess.userExists(alex));
+
+        var kenny = new User("Kenny", "pass", "@gmail");
+        assertFalse(dataAccess.userExists(kenny));
+
+        dataAccess.createUser(kenny);
+        assertTrue(dataAccess.userExists(kenny));
     }
 
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
-    @DisplayName("Login")
-    void login(Class<? extends DataAccess> dbClass) throws DataAccessException {
+    @DisplayName("Clear Database")
+    void clear(Class<? extends DataAccess> dbClass) throws DataAccessException {
         var dataAccess = getDataAccess(dbClass);
+
     }
 }
