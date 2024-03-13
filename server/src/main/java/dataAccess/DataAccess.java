@@ -10,4 +10,6 @@ public interface DataAccess {
     void createUser(User user);
 
     Integer login(String username);
+
+    boolean verifyUser(String username, String password);
 }

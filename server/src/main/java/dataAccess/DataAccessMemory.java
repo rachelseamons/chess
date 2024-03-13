@@ -47,7 +47,22 @@ public class DataAccessMemory implements DataAccess {
             currAuthToken++;
         }
 
+        if (users.get(username) != null && users.get(username).getAuthToken() != null) {
+            users.get(username).setAuthToken(currAuthToken);
+            return currAuthToken;
+        }
+
         auth.put(currAuthToken, username);
         return currAuthToken;
+    }
+
+    @Override
+    public boolean verifyUser(String username, String password) {
+        if (users.get(username) == null) {
+            return false;
+        }
+        var user = users.get(username);
+
+        return user.verifyPassword(password);
     }
 }

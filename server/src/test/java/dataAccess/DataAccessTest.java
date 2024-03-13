@@ -80,4 +80,15 @@ class DataAccessTest {
 
         assertDoesNotThrow(dataAccess::clear);
     }
+
+    @ParameterizedTest
+    @ValueSource(classes = DataAccessMemory.class)
+    @DisplayName("Verify User")
+    void verifyUser(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+        var fred = new User("Fred", "pass", "@gmail");
+        dataAccess.createUser(fred);
+
+        assertTrue(dataAccess.verifyUser("Fred", "pass"));
+    }
 }

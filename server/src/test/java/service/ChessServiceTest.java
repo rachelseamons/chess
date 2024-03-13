@@ -3,8 +3,10 @@ package service;
 import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessMemory;
+import jdk.jfr.Frequency;
 import model.User;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,6 +21,11 @@ class ChessServiceTest {
         //this is using the memory implementation; should work the same with SQL
         var dataAccess = new DataAccessMemory();
         service = new ChessService(dataAccess);
+    }
+
+    @BeforeEach
+    public void setUp() throws DataAccessException {
+        service.clear();
     }
 
     @Test
@@ -56,5 +63,16 @@ class ChessServiceTest {
         service.registerUser(carl);
 
         assertDoesNotThrow(() -> service.clear());
+
+        //TODO::expand this test once you've implemented listGames
+    }
+
+    @Test
+    @DisplayName("Login")
+    void login() throws DataAccessException {
+        var fred = new User("Fred", "pass", "@gmail");
+
+        service.registerUser(fred);
+        assertDoesNotThrow(() -> service.login("Fred", "pass"));
     }
 }

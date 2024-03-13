@@ -26,15 +26,18 @@ public class ChessService {
 
         dataAccess.createUser(user);
 
-        var username = user.getUsername();
-        var authToken = dataAccess.login(username);
+        var authToken = dataAccess.login(user.getUsername());
 
         return authToken;
     }
 
 
-    public String login(String username, String password) throws DataAccessException {
-        return null;
+    public Integer login(String username, String user) throws DataAccessException {
+        if (!dataAccess.verifyUser(username, user)) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        return dataAccess.login(username);
     }
 
 
