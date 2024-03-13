@@ -21,6 +21,15 @@ class DataAccessTest {
 
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
+    @DisplayName("Create User")
+    void createUser(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+
+        assertDoesNotThrow(() -> dataAccess.createUser(new User("Fred", "pass", "@gmail")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = DataAccessMemory.class)
     @DisplayName("Clear Database")
     void clear(Class<? extends DataAccess> dbClass) throws DataAccessException {
         var dataAccess = getDataAccess(dbClass);
@@ -30,21 +39,13 @@ class DataAccessTest {
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
     @DisplayName("User Exists")
-    boolean userExists(Class<? extends DataAccess> dbClass) throws DataAccessException {
-    }
-
-    @ParameterizedTest
-    @ValueSource(classes = DataAccessMemory.class)
-    @DisplayName("Create User")
-    void createUser(Class<? extends DataAccess> dbClass) throws DataAccessException {
-        var dataAccess = getDataAccess(dbClass);
-
+    void userExists(Class<? extends DataAccess> dbClass) throws DataAccessException {
     }
 
     @ParameterizedTest
     @ValueSource(classes = DataAccessMemory.class)
     @DisplayName("Login")
-    Integer login(Class<? extends DataAccess> dbClass) throws DataAccessException {
+    void login(Class<? extends DataAccess> dbClass) throws DataAccessException {
         var dataAccess = getDataAccess(dbClass);
     }
 }
