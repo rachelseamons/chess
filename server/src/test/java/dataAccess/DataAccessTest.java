@@ -123,6 +123,7 @@ class DataAccessTest {
         var authToken = dataAccess.login("Fred");
 
         assertDoesNotThrow(() -> dataAccess.createGame(authToken, "My Game"));
+        assertNotNull(dataAccess.createGame(authToken, "My Game 2"));
     }
 
     @ParameterizedTest

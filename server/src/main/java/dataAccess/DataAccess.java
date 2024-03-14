@@ -1,10 +1,8 @@
 package dataAccess;
 
-import chess.ChessGame;
 import model.Game;
 import model.User;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public interface DataAccess {
@@ -22,5 +20,5 @@ public interface DataAccess {
 
     Map<Integer, Game> getGames(Integer authToken) throws DataAccessException;
 
-    void createGame(Integer authToken, String gameName) throws DataAccessException;
+    Integer createGame(Integer authToken, String gameName) throws DataAccessException;
 }

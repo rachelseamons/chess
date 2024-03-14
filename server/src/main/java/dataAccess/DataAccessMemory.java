@@ -1,10 +1,8 @@
 package dataAccess;
 
-import chess.ChessGame;
 import model.Game;
 import model.User;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,9 +29,7 @@ public class DataAccessMemory implements DataAccess {
         String username = user.getUsername();
         if (users.get(username) == null) {
             return false;
-        } else if (users.get(username).equals(user)) {
-            return true;
-        } else return false;
+        } else return users.get(username).equals(user);
     }
 
     @Override
@@ -96,7 +92,7 @@ public class DataAccessMemory implements DataAccess {
     }
 
     @Override
-    public void createGame(Integer authToken, String gameName) throws DataAccessException {
+    public Integer createGame(Integer authToken, String gameName) throws DataAccessException {
         var user = auth.get(authToken);
         if (user == null) {
             throw new DataAccessException("Error: unauthorized");
@@ -109,5 +105,6 @@ public class DataAccessMemory implements DataAccess {
 
         var newGame = new Game(gameName);
         games.put(currGameID, newGame);
+        return currGameID;
     }
 }

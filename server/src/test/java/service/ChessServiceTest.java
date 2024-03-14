@@ -1,9 +1,7 @@
 package service;
 
-import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
 import dataAccess.DataAccessMemory;
-import jdk.jfr.Frequency;
 import model.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -113,7 +111,7 @@ class ChessServiceTest {
 
     @Test
     @DisplayName("Logout Non-Existing User")
-    void nonexistantLogout() throws DataAccessException {
+    void nonexistentLogout() throws DataAccessException {
         Exception exception = assertThrows(DataAccessException.class, () ->
                 service.logout(1238));
 
@@ -129,5 +127,25 @@ class ChessServiceTest {
 
         actualMessage = exception.getMessage();
         assertEquals(expectedMessage, actualMessage);
+    }
+
+    @Test
+    @DisplayName("Create Game")
+    void createGame() throws DataAccessException {
+        var fred = new User("Fred", "pass", "@gmail");
+        var authToken = service.registerUser(fred);
+        assertNotNull(service.createGame(authToken, "My Game"));
+    }
+
+    @Test
+    @DisplayName("List Games")
+    void listGames() throws DataAccessException {
+        var fred = new User("Fred", "pass", "@gmail");
+        var authToken = service.registerUser(fred);
+        assertEquals(0, service.listGames(authToken).size());
+
+        service.createGame(authToken, "My Game");
+        service.createGame(authToken, "My Game 2");
+        service.createGame(authToken, "My Game 3");
     }
 }

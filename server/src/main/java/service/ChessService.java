@@ -4,7 +4,7 @@ import dataAccess.DataAccess;
 import dataAccess.DataAccessException;
 import model.User;
 
-import java.util.Collection;
+import java.util.*;
 
 public class ChessService {
     DataAccess dataAccess;
@@ -26,9 +26,7 @@ public class ChessService {
 
         dataAccess.createUser(user);
 
-        var authToken = dataAccess.login(user.getUsername());
-
-        return authToken;
+        return dataAccess.login(user.getUsername());
     }
 
 
@@ -48,12 +46,13 @@ public class ChessService {
 
     public Collection<String> listGames(Integer authToken) throws DataAccessException {
         var games = dataAccess.getGames(authToken);
+        //TODO::ask prof or TAs what the format of this should be (list of maps, list of strings, etc)
         return null;
     }
 
 
-    public String createGame(String authToken, String gameName) throws DataAccessException {
-        return null;
+    public Integer createGame(Integer authToken, String gameName) throws DataAccessException {
+        return dataAccess.createGame(authToken, gameName);
     }
 
 
