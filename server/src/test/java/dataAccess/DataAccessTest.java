@@ -1,9 +1,12 @@
 package dataAccess;
 
+import model.Game;
 import model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -78,7 +81,14 @@ class DataAccessTest {
         dataAccess.createUser(carl);
         dataAccess.createUser(alex);
 
+        var authToken = dataAccess.login("Alex");
+        dataAccess.createGame(authToken, "My Game");
+        dataAccess.createGame(authToken, "My Game 2");
+        dataAccess.createGame(authToken, "My Game 3");
+
         assertDoesNotThrow(dataAccess::clear);
+        authToken = dataAccess.login("Alex");
+        assertEquals(0, dataAccess.getGames(authToken).size());
     }
 
     @ParameterizedTest
@@ -90,5 +100,51 @@ class DataAccessTest {
         dataAccess.createUser(fred);
 
         assertTrue(dataAccess.verifyUser("Fred", "pass"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = DataAccessMemory.class)
+    @DisplayName("Logout")
+    void logout(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+        var fred = new User("Fred", "pass", "@gmail");
+        dataAccess.createUser(fred);
+        var authToken = dataAccess.login("Fred");
+
+        assertDoesNotThrow(() -> dataAccess.logout(authToken));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = DataAccessMemory.class)
+    @DisplayName("Create Game")
+    void createGame(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+        dataAccess.createUser(new User("Fred", "pass"));
+        var authToken = dataAccess.login("Fred");
+
+        assertDoesNotThrow(() -> dataAccess.createGame(authToken, "My Game"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(classes = DataAccessMemory.class)
+    @DisplayName("Get Games")
+    void getGames(Class<? extends DataAccess> dbClass) throws DataAccessException {
+        var dataAccess = getDataAccess(dbClass);
+        dataAccess.createUser(new User("Fred", "pass"));
+        var authToken = dataAccess.login("Fred");
+
+        assertEquals(0, dataAccess.getGames(authToken).size());
+
+        dataAccess.createGame(authToken, "My Game");
+        dataAccess.createGame(authToken, "My Game 2");
+        dataAccess.createGame(authToken, "My Game 3");
+
+        var expected = new HashMap<Integer, Game>();
+        expected.put(0, new Game("My Game"));
+        expected.put(1, new Game("My Game 2"));
+        expected.put(2, new Game("My Game 3"));
+
+        var actual = dataAccess.getGames(authToken);
+        assertEquals(expected, actual);
     }
 }

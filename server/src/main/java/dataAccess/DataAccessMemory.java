@@ -1,16 +1,19 @@
 package dataAccess;
 
 import chess.ChessGame;
+import model.Game;
 import model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 public class DataAccessMemory implements DataAccess {
-    private HashMap<Integer, ChessGame> games = new HashMap<>();
+    private HashMap<Integer, Game> games = new HashMap<>();
     private HashMap<String, User> users = new HashMap<>();
     private HashMap<Integer, String> auth = new HashMap<>();
     private int currAuthToken = 0;
+    private int currGameID = 0;
 
     @Override
     public void clear() throws DataAccessException {
@@ -42,7 +45,6 @@ public class DataAccessMemory implements DataAccess {
     @Override
     public Integer login(String username) throws DataAccessException {
         //finding next available authToken
-        //TODO::when removing from auth, set currAuthToken to the removed authToken and user authToken to null
         while (auth.get(currAuthToken) != null) {
             currAuthToken++;
         }
@@ -69,5 +71,43 @@ public class DataAccessMemory implements DataAccess {
         var user = users.get(username);
 
         return user.verifyPassword(password);
+    }
+
+    @Override
+    public void logout(Integer authToken) throws DataAccessException {
+        var user = auth.get(authToken);
+        if (user == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+        auth.remove(authToken);
+
+        currAuthToken = authToken;
+        users.get(user).setAuthToken(null);
+    }
+
+    @Override
+    public Map<Integer, Game> getGames(Integer authToken) throws DataAccessException {
+        var user = auth.get(authToken);
+        if (user == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        return games;
+    }
+
+    @Override
+    public void createGame(Integer authToken, String gameName) throws DataAccessException {
+        var user = auth.get(authToken);
+        if (user == null) {
+            throw new DataAccessException("Error: unauthorized");
+        }
+
+        //finding next available gameID
+        while (games.get(currGameID) != null) {
+            currGameID++;
+        }
+
+        var newGame = new Game(gameName);
+        games.put(currGameID, newGame);
     }
 }

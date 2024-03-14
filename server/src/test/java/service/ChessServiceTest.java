@@ -101,4 +101,33 @@ class ChessServiceTest {
 
         assertEquals(expectedMessage, actualMessage);
     }
+
+    @Test
+    @DisplayName("Logout")
+    void logout() throws DataAccessException {
+        var fred = new User("Fred", "pass", "@gmail");
+
+        var authToken = service.registerUser(fred);
+        assertDoesNotThrow(() -> service.logout(authToken));
+    }
+
+    @Test
+    @DisplayName("Logout Non-Existing User")
+    void nonexistantLogout() throws DataAccessException {
+        Exception exception = assertThrows(DataAccessException.class, () ->
+                service.logout(1238));
+
+        String expectedMessage = "Error: unauthorized";
+        String actualMessage = exception.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+
+        var fred = new User("Fred", "pass", "@gmail");
+        var authToken = service.registerUser(fred);
+        service.logout(authToken);
+
+        exception = assertThrows(DataAccessException.class, () -> service.logout(authToken));
+
+        actualMessage = exception.getMessage();
+        assertEquals(expectedMessage, actualMessage);
+    }
 }

@@ -41,12 +41,13 @@ public class ChessService {
     }
 
 
-    public boolean logout(String authToken) throws DataAccessException {
-        return false;
+    public void logout(Integer authToken) throws DataAccessException {
+        dataAccess.logout(authToken);
     }
 
 
-    public Collection<String> listGames(String authToken) throws DataAccessException {
+    public Collection<String> listGames(Integer authToken) throws DataAccessException {
+        var games = dataAccess.getGames(authToken);
         return null;
     }
 
