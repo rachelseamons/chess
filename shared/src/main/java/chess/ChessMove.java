@@ -1,5 +1,9 @@
 package chess;
 
+import org.junit.platform.engine.support.hierarchical.OpenTest4JAwareThrowableCollector;
+
+import java.util.Objects;
+
 /**
  * Represents moving a chess piece on a chessboard
  * <p>
@@ -45,5 +49,18 @@ public class ChessMove {
      */
     public ChessPiece.PieceType getPromotionPiece() {
         return promote;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        ChessMove chessMove = (ChessMove) object;
+        return Objects.equals(start, chessMove.start) && Objects.equals(end, chessMove.end) && promote == chessMove.promote;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(start, end, promote);
     }
 }
