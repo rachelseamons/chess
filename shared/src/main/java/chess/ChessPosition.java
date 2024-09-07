@@ -30,4 +30,42 @@ public class ChessPosition {
     public int getColumn() {
         return col;
     }
+
+    /**
+     * @return a position one to the left
+     */
+    public ChessPosition decrementRow() {
+        return new ChessPosition(row - 1, col);
+    }
+
+    /**
+     * @return a position one to the right
+     */
+    public ChessPosition incrementRow() {
+        return new ChessPosition(row + 1, col);
+    }
+
+    /**
+     * @return a position one below
+     */
+    public ChessPosition decrementCol() {
+        return new ChessPosition(row, col - 1);
+    }
+
+    /**
+     * @return a position one above
+     */
+    public ChessPosition incrementCol() {
+        return new ChessPosition(row, col + 1);
+    }
+
+    /**
+     * @return a boolean indicating if position is on board
+     */
+    public boolean onBoard() {
+        if (row > 0 && row < 9) {
+            return col > 0 && col < 9;
+        }
+        return false;
+    }
 }
