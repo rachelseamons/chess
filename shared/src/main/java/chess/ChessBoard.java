@@ -39,6 +39,12 @@ public class ChessBoard {
         return at(position);
     }
 
+    /**
+     * returns the ChessPiece object from the board at a ChessPosition
+     *
+     * @param position the position to get the piece from
+     * @return Either the piece at the position or null if there is no piece
+     */
     public ChessPiece at(ChessPosition position) {
         return board[position.getRow() - 1][position.getColumn() - 1];
     }
@@ -52,6 +58,93 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        //emptying board
+        for (int i = 0; i < BOARD_HEIGHT; i++) {
+            for (int j = 0; j < BOARD_WIDTH; j++) {
+                board[i][j] = null;
+            }
+        }
+
+        addRooks();
+        addKnights();
+        addBishops();
+        addRoyalty();
+        addPawns();
+    }
+
+    /**
+     * helper function for resetBoard
+     * adds rooks in starting positions
+     */
+    private void addRooks() {
+        ChessPiece whiteRook = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        ChessPiece blackRook = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+
+        board[0][0] = whiteRook;
+        board[0][7] = whiteRook;
+
+        board[7][0] = blackRook;
+        board[7][7] = blackRook;
+    }
+
+    /**
+     * helper function for resetBoard
+     * adds knights in starting positions
+     */
+    private void addKnights() {
+        ChessPiece whiteKnight = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        ChessPiece blackKnight = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+
+        board[0][1] = whiteKnight;
+        board[0][6] = whiteKnight;
+
+        board[7][1] = blackKnight;
+        board[7][6] = blackKnight;
+    }
+
+    /**
+     * helper function for resetBoard
+     * adds bishops in starting positions
+     */
+    private void addBishops() {
+        ChessPiece whiteBishop = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        ChessPiece blackBishop = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+
+        board[0][2] = whiteBishop;
+        board[0][5] = whiteBishop;
+
+        board[7][2] = blackBishop;
+        board[7][5] = blackBishop;
+    }
+
+    /**
+     * helper function for resetBoard
+     * adds kings and queens in starting positions
+     */
+    private void addRoyalty() {
+        ChessPiece whiteKing = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        ChessPiece blackKing = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
+        ChessPiece whiteQueen = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        ChessPiece blackQueen = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+
+        board[0][3] = whiteQueen;
+        board[0][4] = whiteKing;
+
+        board[7][3] = blackQueen;
+        board[7][4] = blackKing;
+    }
+
+    /**
+     * helper function for resetBard
+     * adds pawns in starting positions
+     */
+    private void addPawns() {
+        ChessPiece whitePawn = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+        ChessPiece blackPawn = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            board[1][i] = whitePawn;
+            board[6][i] = blackPawn;
+        }
     }
 }
