@@ -53,7 +53,10 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        var rules = new ChessRules(board, board.at(myPosition));
+        Set<ChessMove> possibleMoves = rules.getPossibleMoves(myPosition);
+
+        return possibleMoves;
     }
 
     @Override
