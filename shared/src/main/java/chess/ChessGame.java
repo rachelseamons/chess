@@ -66,11 +66,12 @@ public class ChessGame {
         possible = rules.getPossibleMoves(startPosition);
 
         //make sure no moves enter check
-        for (ChessMove move : possible) {
-            if (notEnterCheck(move)) {
-                valid.add(move);
-            }
-        }
+        //TODO:: uncomment
+        //for (ChessMove move : possible) {
+          //  if (notEnterCheck(move)) {
+            //    valid.add(move);
+            //}
+        //}
 
         return valid;
     }
