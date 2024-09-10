@@ -66,4 +66,70 @@ public class ChessRules {
 
         return possible;
     }
+
+    private Set<ChessMove> promotePawn(ChessPosition startPosition, ChessPosition endPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.QUEEN));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.KNIGHT));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.BISHOP));
+        possible.add(new ChessMove(startPosition, endPosition, ChessPiece.PieceType.ROOK));
+
+        return possible;
+    }
+
+    private Set<ChessMove> pawnInitial(ChessPosition startPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+        var endPosition = startPosition;
+        var testBlocked = startPosition;
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            testBlocked = startPosition.decrementRow();
+            endPosition = testBlocked.decrementRow();
+        } else if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            testBlocked = startPosition.incrementRow();
+            endPosition = testBlocked.incrementRow();
+        }
+
+        if (endPosition.onBoard() && board.at(endPosition) == null && board.at(testBlocked) == null) {
+            possible.add(new ChessMove(startPosition, endPosition));
+        }
+        return possible;
+    }
+
+    private Set<ChessMove> pawnCapture(ChessPosition startPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+        var endPosition = startPosition;
+
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+            endPosition = startPosition.incrementRow();
+        } else if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+            endPosition = startPosition.decrementRow();
+        }
+
+        //check right
+        ChessPosition test = endPosition.incrementCol();
+        if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
+            if ((test.getRow() == 1 || test.getRow() == 8)
+                    && board.at(test).getPieceType() != ChessPiece.PieceType.KING) {
+                //tests for king because if king is captured, game ends and pawn won't be promoted
+                possible.addAll((promotePawn(startPosition, test)));
+            } else {
+                possible.add(new ChessMove(startPosition, test));
+            }
+        }
+
+        //check left
+        test = endPosition.decrementCol();
+        if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
+            if ((test.getRow() == 1 || test.getRow() == 8)
+                    && board.at(test).getPieceType() != ChessPiece.PieceType.KING) {
+                possible.addAll((promotePawn(startPosition, test)));
+            } else {
+                possible.add(new ChessMove(startPosition, test));
+            }
+        }
+
+        return possible;
+    }
 }
