@@ -249,6 +249,42 @@ public class ChessRules {
         return start;
     }
 
+    public boolean isInCheck(ChessGame.TeamColor teamColor) {
+        //find position of king
+        ChessPosition kingPosition = null;
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition test = new ChessPosition(i,j);
+                if (board.at(test) != null && board.at(test).getTeamColor() == teamColor
+                        && board.at(test).getPieceType() == ChessPiece.PieceType.KING) {
+                    kingPosition = test;
+                }
+            }
+        }
+
+        if (kingPosition == null) {
+            return false;
+        }
+
+        //test if any piece on opposing team can move to king
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition test = new ChessPosition(i,j);
+                if (board.at(test) != null && board.at(test).getTeamColor() != teamColor) {
+                    ChessMove testMove = new ChessMove(test, kingPosition);
+                    piece = board.at(test);
+                    Set<ChessMove> possiblePieceMoves = getPossibleMoves(test);
+                    for (ChessMove move : possiblePieceMoves) {
+                        if (move.equals(testMove)) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     private enum direction {
         N, NE, E, SE, S, SW, W, NW;
     }
