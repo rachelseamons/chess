@@ -199,6 +199,28 @@ public class ChessRules {
         return possible;
     }
 
+    private ChessPosition moveDirection(ChessPosition start, direction direction) {
+        if (direction == ChessRules.direction.N) {
+            return start.incrementRow();
+        } else if (direction == ChessRules.direction.NE) {
+            return start.incrementRow().incrementCol();
+        } else if (direction == ChessRules.direction.E) {
+            return start.incrementCol();
+        } else if (direction == ChessRules.direction.SE) {
+            return start.decrementRow().incrementCol();
+        } else if (direction == ChessRules.direction.S) {
+            return start.decrementRow();
+        } else if (direction == ChessRules.direction.SW) {
+            return start.decrementRow().decrementCol();
+        } else if (direction == ChessRules.direction.W) {
+            return start.decrementCol();
+        } else if (direction == ChessRules.direction.NW) {
+            return start.incrementRow().decrementCol();
+        }
+
+        return start;
+    }
+
     private enum direction {
         N, NE, E, SE, S, SW, W, NW;
     }
