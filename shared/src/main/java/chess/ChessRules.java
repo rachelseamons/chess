@@ -174,7 +174,33 @@ public class ChessRules {
         return possible;
     }
 
-    //TODO:: START HERE WITH moveBishop
+    private Set<ChessMove> moveBishop(ChessPosition start) {
+        Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
+
+        possible.addAll(straightLine(start, direction.NW));
+        possible.addAll(straightLine(start, direction.SW));
+        possible.addAll(straightLine(start, direction.SE));
+        possible.addAll(straightLine(start, direction.NE));
+
+        return possible;
+    }
+
+    private Set<ChessMove> moveRoyalty(ChessPosition start) {
+        Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
+
+        possible.addAll(straightLine(start, direction.N));
+        possible.addAll(straightLine(start, direction.NW));
+        possible.addAll(straightLine(start, direction.W));
+        possible.addAll(straightLine(start, direction.SW));
+        possible.addAll(straightLine(start, direction.S));
+        possible.addAll(straightLine(start, direction.SE));
+        possible.addAll(straightLine(start, direction.E));
+        possible.addAll(straightLine(start, direction.NE));
+
+        return possible;
+    }
 
     private Set<ChessMove> straightLine(ChessPosition start, direction direction) {
         Set<ChessMove> possible = new HashSet<>();
