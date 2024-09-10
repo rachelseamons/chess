@@ -1,7 +1,5 @@
 package chess;
 
-import org.junit.platform.engine.support.hierarchical.OpenTest4JAwareThrowableCollector;
-
 import java.util.Objects;
 
 /**
