@@ -31,4 +31,39 @@ public class ChessRules {
         }
         return new HashSet<>();
     }
+
+    private Set<ChessMove> movePawn(ChessPosition startPosition) {
+        Set<ChessMove> possible = new HashSet<>();
+
+        //move one space forward for black
+        ChessPosition endPosition = startPosition.decrementRow();
+        if (piece.getTeamColor() == ChessGame.TeamColor.BLACK && endPosition.onBoard() && board.at(endPosition) == null) {
+            if (endPosition.getRow() == 1) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                possible.add(new ChessMove(startPosition, endPosition));
+            }
+        }
+
+        //move one space forward for white
+        endPosition = startPosition.incrementRow();
+        if (piece.getTeamColor() == ChessGame.TeamColor.WHITE && endPosition.onBoard() && board.at(endPosition) == null) {
+            if (endPosition.getRow() == 8) {
+                possible.addAll(promotePawn(startPosition, endPosition));
+            } else {
+                possible.add(new ChessMove(startPosition, endPosition));
+            }
+        }
+
+        //add captures
+        possible.addAll(pawnCapture(startPosition));
+
+        //add double move from initial positions
+        if ((piece.getTeamColor() == ChessGame.TeamColor.BLACK && startPosition.getRow() == 7)
+                || (piece.getTeamColor() == ChessGame.TeamColor.WHITE && startPosition.getRow() == 2)) {
+            possible.addAll(pawnInitial(startPosition));
+        }
+
+        return possible;
+    }
 }
