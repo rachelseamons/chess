@@ -161,4 +161,45 @@ public class ChessRules {
 
         return possible;
     }
+
+    private Set<ChessMove> moveRook(ChessPosition start) {
+        Set<ChessMove> possible = new HashSet<>();
+        repeatable = true;
+
+        possible.addAll(straightLine(start, direction.N));
+        possible.addAll(straightLine(start, direction.W));
+        possible.addAll(straightLine(start, direction.S));
+        possible.addAll(straightLine(start, direction.E));
+
+        return possible;
+    }
+
+    private Set<ChessMove> straightLine(ChessPosition start, direction direction) {
+        Set<ChessMove> possible = new HashSet<>();
+        ChessPosition test = start;
+
+        do {
+            if (board.at(start).getPieceType() == ChessPiece.PieceType.KING) {
+                repeatable = false;
+            }
+            test = moveDirection(test, direction);
+            if (!test.onBoard()) {
+                repeatable = false;
+            } else if (board.at(test) == null) {
+                possible.add(new ChessMove(start, test));
+            } else if (board.at(test).getTeamColor() != piece.getTeamColor()) {
+                possible.add(new ChessMove(start, test));
+                repeatable = false;
+            } else {
+                repeatable = false;
+            }
+        } while (repeatable);
+
+        repeatable = true;
+        return possible;
+    }
+
+    private enum direction {
+        N, NE, E, SE, S, SW, W, NW;
+    }
 }
