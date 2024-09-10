@@ -132,4 +132,33 @@ public class ChessRules {
 
         return possible;
     }
+
+    private Set<ChessMove> moveKnight(ChessPosition start) {
+        Set<ChessMove> possible = new HashSet<>();
+        Set<ChessPosition> tests = new HashSet<>();
+
+        //move northeast
+        tests.add(start.incrementRow().incrementCol().incrementCol());
+        tests.add(start.incrementRow().incrementRow().incrementCol());
+
+        //move northwest
+        tests.add(start.incrementRow().decrementCol().decrementCol());
+        tests.add(start.incrementRow().incrementRow().decrementCol());
+
+        //move southeast
+        tests.add(start.decrementRow().incrementCol().incrementCol());
+        tests.add(start.decrementRow().decrementRow().incrementCol());
+
+        //move southwest
+        tests.add(start.decrementRow().decrementCol().decrementCol());
+        tests.add(start.decrementRow().decrementRow().decrementCol());
+
+        for (ChessPosition test : tests) {
+            if (test.onBoard() && (board.at(test) == null || board.at(test).getTeamColor() != piece.getTeamColor())) {
+                possible.add(new ChessMove(start, test));
+            }
+        }
+
+        return possible;
+    }
 }
