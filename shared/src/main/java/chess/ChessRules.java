@@ -174,6 +174,8 @@ public class ChessRules {
         return possible;
     }
 
+    //TODO:: START HERE WITH moveBishop
+
     private Set<ChessMove> straightLine(ChessPosition start, direction direction) {
         Set<ChessMove> possible = new HashSet<>();
         ChessPosition test = start;
