@@ -16,6 +16,7 @@ public class ChessGame {
     private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
+        //based on the tests, when a game is created, it should have a fully loaded-in board already available
         board.resetBoard();
     }
 
