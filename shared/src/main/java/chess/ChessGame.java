@@ -16,7 +16,7 @@ public class ChessGame {
     private ChessBoard board = new ChessBoard();
 
     public ChessGame() {
-
+        board.resetBoard();
     }
 
     /**
@@ -228,6 +228,11 @@ public class ChessGame {
             return false;
         }
 
+        //to be in stalemate, cannot start in check
+        if (isInCheck(teamColor)) {
+            return false;
+        }
+
         //get all valid moves for team
         Set<ChessMove> possibleMoves = new HashSet<>();
         for (int i = 1; i < 9; i++) {
@@ -238,13 +243,6 @@ public class ChessGame {
                 }
             }
         }
-
-        //TODO:: print any test position that makes it inside the if statement to the terminal
-
-        //TODO:: somehow, this is returning that black is in stalemate when the board is in the start state
-        //TODO:: feels like something is weird in validMoves or smthg, which could lead back to notEnterCheck again
-        //TODO:: figure out how to get printed debug statements to appear on the terminal
-        //TODO:: will make this a lot easier
 
         //if there are any valid moves, specified team is not in stalemate because a valid move cannot end with the
         //king in check
