@@ -172,7 +172,7 @@ public class ChessGame {
         }
 
         //check if in check
-        ChessRules testCheck = new ChessRules(testBoard, null);
+        ChessRules testCheck = new ChessRules(testBoard, piece);
         return !testCheck.isInCheck(piece.getTeamColor());
     }
 
