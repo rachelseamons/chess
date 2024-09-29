@@ -222,7 +222,9 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (board == null) {
+        //if the board is completely empty, no team can be in stalemate
+        //allows checks before a board is loaded to go through
+        if (board.isEmpty()) {
             return false;
         }
 
