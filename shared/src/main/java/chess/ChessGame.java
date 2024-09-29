@@ -203,7 +203,7 @@ public class ChessGame {
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition test = new ChessPosition(i,j);
-                if (board.at(test) != null && board.at(test).getTeamColor() == turn) {
+                if (board.at(test) != null && board.at(test).getTeamColor() == teamColor) {
                     possibleMoves.addAll(validMoves(test));
                 }
             }
@@ -228,11 +228,15 @@ public class ChessGame {
             for (int j = 1; j < 9; j++) {
                 ChessPosition test = new ChessPosition(i,j);
                 if (board.at(test) != null && board.at(test).getTeamColor() == teamColor) {
-                    System.out.println(i+j);
                     possibleMoves.addAll(validMoves(test));
                 }
             }
         }
+
+        //TODO:: somehow, this is returning that black is in stalemate when the board is in the start state
+        //TODO:: feels like something is weird in validMoves or smthg, which could lead back to notEnterCheck again
+        //TODO:: figure out how to get printed debug statements to appear on the terminal
+        //TODO:: will make this a lot easier
 
         //if there are any valid moves, specified team is not in stalemate because a valid move cannot end with the
         //king in check
