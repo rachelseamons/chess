@@ -110,14 +110,6 @@ public class ChessGame {
         board.addPiece(move.getEndPosition(), piece);
         board.removePiece(move.getStartPosition());
 
-        //if game is now in check, not a valid move
-        //this should be a redundant line, as the isValidMove check above checks if the potential
-        //move will enter check
-        //TODO:: consider removing
-        if (isInCheck(turn)) {
-            throw (new InvalidMoveException());
-        }
-
         //pass turn
         if (piece.getTeamColor() == TeamColor.BLACK) {
             turn = TeamColor.WHITE;
