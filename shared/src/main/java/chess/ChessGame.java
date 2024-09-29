@@ -121,6 +121,12 @@ public class ChessGame {
         }
     }
 
+    /**
+     * Checks if a move is allowed according to game rules
+     *
+     * @param move chess move to test
+     * @return if move is allowed
+     */
     public boolean isValidMove(ChessMove move) {
         if (move.getStartPosition() == null || !move.getStartPosition().onBoard() || !move.getEndPosition().onBoard()) {
             return false;
@@ -143,6 +149,16 @@ public class ChessGame {
         }
 
         return false;
+    }
+
+    /**
+     * checks whether a move will enter check
+     *
+     * @param move chess move to test
+     * @return true if move does NOT enter check
+     */
+    public boolean notEnterCheck(ChessMove move) {
+
     }
 
     /**
