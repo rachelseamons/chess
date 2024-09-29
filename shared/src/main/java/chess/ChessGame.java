@@ -209,11 +209,7 @@ public class ChessGame {
 
         //if there are any valid moves, then the specified team is not in checkmate because a move can only be valid if
         //it doesn't end with the king in check
-        if (possibleMoves.size() > 0) {
-            return false;
-        } else {
-            return true;
-        }
+        return possibleMoves.isEmpty();
     }
 
     /**
