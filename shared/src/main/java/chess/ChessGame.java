@@ -89,15 +89,6 @@ public class ChessGame {
             throw (new InvalidMoveException());
         }
 
-        //TODO:: somehow by the point the test failed, the board was completely empty.
-        //TODO:: where is the board getting reset?
-        //TODO:: write a toString for ChessBoard and have it print at the start of each makeMove
-        //TODO:: somewhere in the scholarsMate test (FullGameTest) all your pieces are disappearing.
-
-        //TODO:: if it's not when you're actually making a move, this exception might be throwing during
-        //TODO:: a isInCheckmate or isInStalemate, because they both indirectly call notEnterCheck, which
-        //TODO:: calls makeMove to test the move
-
         if (!isValidMove(move)) {
             throw (new InvalidMoveException());
         }
@@ -222,12 +213,6 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        //if the board is completely empty, no team can be in stalemate
-        //allows checks before a board is loaded to go through
-        if (board.isEmpty()) {
-            return false;
-        }
-
         //to be in stalemate, cannot start in check
         if (isInCheck(teamColor)) {
             return false;
