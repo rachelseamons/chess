@@ -261,4 +261,9 @@ public class ChessGame {
         if (!(object instanceof  ChessGame chessGame)) return false;
         return turn == chessGame.turn && Objects.equals(board, chessGame.board);
     }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(turn, board);
+    }
 }
