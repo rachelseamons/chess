@@ -104,11 +104,10 @@ public class ChessGame {
         board.addPiece(move.getEndPosition(), piece);
         board.removePiece(move.getStartPosition());
 
-
-        //TODO:: idk if tests cover it, but it seems like you should undo the move above if this is true
-        //TODO:: addPiece at start (check move to see if pawn was promoted by checking same conditions used
-        //TODO:: to decide promote and if move has promote val), removePiece at end
         //if game is now in check, not a valid move
+        //this should be a redundant line, as the isValidMove check above checks if the potential
+        //move will enter check
+        //TODO:: consider removing
         if (isInCheck(turn)) {
             throw (new InvalidMoveException());
         }
@@ -158,7 +157,21 @@ public class ChessGame {
      * @return true if move does NOT enter check
      */
     public boolean notEnterCheck(ChessMove move) {
+        ChessBoard testBoard = board.copy();
+        ChessPiece piece = testBoard.at(move.getStartPosition());
 
+        //execute move on testBoard
+        //doesn't check as many conditions for this move being valid because it's only affecting a temporary board
+        //only checks conditions that could make subsequent function calls impossible
+        if (testBoard.at(move.getEndPosition()) == null
+                || testBoard.at(move.getEndPosition()).getTeamColor() != piece.getTeamColor()) {
+            testBoard.addPiece(move.getEndPosition(), piece);
+            testBoard.removePiece(move.getStartPosition());
+        }
+
+        //check if in check
+        ChessRules testCheck = new ChessRules(testBoard, null);
+        return !testCheck.isInCheck(piece.getTeamColor());
     }
 
     /**
@@ -168,7 +181,7 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        
     }
 
     /**
