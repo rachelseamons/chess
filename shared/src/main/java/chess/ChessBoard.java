@@ -148,6 +148,17 @@ public class ChessBoard {
         }
     }
 
+    public boolean isEmpty() {
+        for (int i = 0; i < BOARD_WIDTH; i++) {
+            for (int j = 0; j < BOARD_HEIGHT; j++) {
+                if (board[i][j] != null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;

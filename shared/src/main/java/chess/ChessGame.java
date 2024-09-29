@@ -222,6 +222,10 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
+        if (board == null) {
+            return false;
+        }
+
         //get all valid moves for team
         Set<ChessMove> possibleMoves = new HashSet<>();
         for (int i = 1; i < 9; i++) {
@@ -232,6 +236,8 @@ public class ChessGame {
                 }
             }
         }
+
+        //TODO:: print any test position that makes it inside the if statement to the terminal
 
         //TODO:: somehow, this is returning that black is in stalemate when the board is in the start state
         //TODO:: feels like something is weird in validMoves or smthg, which could lead back to notEnterCheck again
