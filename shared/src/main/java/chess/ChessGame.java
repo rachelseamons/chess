@@ -82,7 +82,43 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        //if not team turn, throw error
+        ChessPiece piece = board.at(move.getStartPosition());
+        if (turn != piece.getTeamColor()) {
+            throw (new InvalidMoveException());
+        }
+
+        if (!isValidMove(move)) {
+            throw (new InvalidMoveException());
+        }
+
+        //promote pawn
+        if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
+            if ((piece.getTeamColor() == TeamColor.BLACK && move.getEndPosition().getRow() == 1)
+                || (piece.getTeamColor() == TeamColor.WHITE && move.getEndPosition().getRow() == 8)) {
+                piece = new ChessPiece(turn, move.getPromotionPiece());
+            }
+        }
+
+        //execute move
+        board.addPiece(move.getEndPosition(), piece);
+        board.removePiece(move.getStartPosition());
+
+
+        //TODO:: idk if tests cover it, but it seems like you should undo the move above if this is true
+        //TODO:: addPiece at start (check move to see if pawn was promoted by checking same conditions used
+        //TODO:: to decide promote and if move has promote val), removePiece at end
+        //if game is now in check, not a valid move
+        if (isInCheck(turn)) {
+            throw (new InvalidMoveException());
+        }
+
+        //pass turn
+        if (piece.getTeamColor() == TeamColor.BLACK) {
+            turn = TeamColor.WHITE;
+        } else {
+            turn = TeamColor.BLACK;
+        }
     }
 
     /**
