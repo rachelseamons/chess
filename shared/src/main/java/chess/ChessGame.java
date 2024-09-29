@@ -181,7 +181,8 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        
+        ChessRules testCheck = new ChessRules(board, null);
+        return testCheck.isInCheck(teamColor);
     }
 
     /**
