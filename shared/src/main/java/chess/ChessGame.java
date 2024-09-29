@@ -192,7 +192,28 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)) {
+            return false;
+        }
+
+        //get all valid moves for team
+        Set<ChessMove> possibleMoves = new HashSet<>();
+        for (int i = 1; i < 9; i++) {
+            for (int j = 1; j < 9; j++) {
+                ChessPosition test = new ChessPosition(i,j);
+                if (board.at(test) != null && board.at(test).getTeamColor() == turn) {
+                    possibleMoves.addAll(validMoves(test));
+                }
+            }
+        }
+
+        //if there are any valid moves, then the specified team is not in checkmate because a move can only be valid if
+        //it doesn't end with the king in check
+        if (possibleMoves.size() > 0) {
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
