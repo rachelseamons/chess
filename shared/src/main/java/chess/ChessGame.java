@@ -121,6 +121,30 @@ public class ChessGame {
         }
     }
 
+    public boolean isValidMove(ChessMove move) {
+        if (move.getStartPosition() == null || !move.getStartPosition().onBoard() || !move.getEndPosition().onBoard()) {
+            return false;
+        }
+
+        ChessPiece piece = board.at(move.getStartPosition());
+        if (piece == null) {
+            return false;
+        }
+
+        //get all possible moves
+        ChessRules rules = new ChessRules(board, piece);
+        Set<ChessMove> moves = rules.getPossibleMoves(move.getStartPosition());
+
+        //check if move is possible and if so, if it enters check
+        for (ChessMove possibleMove : moves) {
+            if (move.equals(possibleMove) && notEnterCheck(move)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     /**
      * Determines if the given team is in check
      *
