@@ -83,16 +83,20 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        //if no piece at start, throw error
+        //if not team turn or no piece at starting position, throw error
         ChessPiece piece = board.at(move.getStartPosition());
-        if (piece == null) {
+        if (piece == null || turn != piece.getTeamColor()) {
             throw (new InvalidMoveException());
         }
 
-        //if not team turn, throw error
-        if (turn != piece.getTeamColor()) {
-            throw (new InvalidMoveException());
-        }
+        //TODO:: somehow by the point the test failed, the board was completely empty.
+        //TODO:: where is the board getting reset?
+        //TODO:: write a toString for ChessBoard and have it print at the start of each makeMove
+        //TODO:: somewhere in the scholarsMate test (FullGameTest) all your pieces are disappearing.
+
+        //TODO:: if it's not when you're actually making a move, this exception might be throwing during
+        //TODO:: a isInCheckmate or isInStalemate, because they both indirectly call notEnterCheck, which
+        //TODO:: calls makeMove to test the move
 
         if (!isValidMove(move)) {
             throw (new InvalidMoveException());
@@ -111,7 +115,7 @@ public class ChessGame {
         board.removePiece(move.getStartPosition());
 
         //pass turn
-        if (piece.getTeamColor() == TeamColor.BLACK) {
+        if (turn == TeamColor.BLACK) {
             turn = TeamColor.WHITE;
         } else {
             turn = TeamColor.BLACK;
@@ -224,6 +228,7 @@ public class ChessGame {
             for (int j = 1; j < 9; j++) {
                 ChessPosition test = new ChessPosition(i,j);
                 if (board.at(test) != null && board.at(test).getTeamColor() == teamColor) {
+                    System.out.println(i+j);
                     possibleMoves.addAll(validMoves(test));
                 }
             }
