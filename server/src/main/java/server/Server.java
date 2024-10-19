@@ -12,14 +12,16 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
+        var handler = new Handler();
+
         // Register your endpoints and handle exceptions here.
-        Spark.post("/user", this::registerUser);
-        Spark.post("/session", this::loginUser);
-        Spark.delete("/session", this::logoutUser);
-        Spark.get("/game", this::getGames);
-        Spark.post("/game",this::createGame);
-        Spark.put("/game",this::joinGame);
-        Spark.delete("/db",this::clear);
+        Spark.post("/user", handler::registerUser);
+        Spark.post("/session", handler::loginUser);
+        Spark.delete("/session", handler::logoutUser);
+        Spark.get("/game", handler::getGames);
+        Spark.post("/game",handler::createGame);
+        Spark.put("/game",handler::joinGame);
+        Spark.delete("/db",handler::clear);
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
@@ -27,35 +29,7 @@ public class Server {
         return Spark.port();
     }
 
-    private Object clear(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("clear");
-    }
 
-    private Object joinGame(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("join game");
-    }
-
-    private Object createGame(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("create game");
-    }
-
-    private Object getGames(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("get games");
-    }
-
-    private Object logoutUser(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("logout");
-    }
-
-    private Object loginUser(Request request, Response response) throws DataAccessException {
-        return new Gson().toJson("login");
-    }
-
-    private Object registerUser(Request request, Response response) throws DataAccessException {
-        var user = new Gson().fromJson(request.body(), UserData.class);
-
-        return new Gson().toJson(user);
-    }
 
     public int port() {
         return Spark.port();
