@@ -1,4 +1,4 @@
 package dataaccess;
 
-public class UserDataAccess {
+public interface UserDataAccess {
 }
