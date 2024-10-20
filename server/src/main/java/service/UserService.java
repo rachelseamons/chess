@@ -1,11 +1,11 @@
 package service;
 
-import dataaccess.UserDataAccess;
+import dataaccess.UserDAO;
 import dataaccess.UserMemoryDAO;
 import model.UserData;
 
 public class UserService {
-    private UserDataAccess dataAccess;
+    private UserDAO dataAccess;
 
     public UserService(boolean useSQLDatabase) {
         if (useSQLDatabase) {
@@ -14,11 +14,13 @@ public class UserService {
             dataAccess = new UserMemoryDAO();
         }
     }
+
     public Object registerUser(UserData user) {
         if (dataAccess.getUserByUsername(user.username()) == null) {
             return null;
         }
 
+        dataAccess.createUser(user);
         return user;
     }
 }

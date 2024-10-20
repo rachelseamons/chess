@@ -5,7 +5,7 @@ import model.UserData;
 import java.util.HashSet;
 import java.util.Set;
 
-public class UserMemoryDAO implements UserDataAccess {
+public class UserMemoryDAO implements UserDAO {
     private Set<UserData> userData = new HashSet<>();
 
     public String getUserByUsername(String username) {

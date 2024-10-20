@@ -59,25 +59,16 @@ public class Handler {
         return new Gson().toJson(user);
     }
 
-    public Object registerUser(Request request, Response response) throws DataAccessException {
+    public Object registerUser(Request request) throws DataAccessException {
         var user = new Gson().fromJson(request.body(), UserData.class);
 
         if (user.username() == null || user.password() == null || user.email() == null) {
-            System.out.println("in fail 1");
-            response.status(400);
-            var message = "Error: bad request";
-            return new Gson().toJson(message);
+            throw new DataAccessException("Error: bad request");
         }
 
-        //TODO:: add try-catch block to handle syntax errors in requests
-        // actually specs say to do that in the server class, so GAH
-        // go re-read specs to see if you can do some error handling here
-        var confirmation = userService.registerUser(user);
-        if (confirmation == null) {
-            response.status(403);
-            var message= "Error: already taken";
-            return new Gson().toJson(message);
-        }
-        return new Gson().toJson(confirmation);
+        userService.registerUser(user);
+
+        var result = authService.createAuth(user.username());
+        return new Gson().toJson(result);
     }
 }
