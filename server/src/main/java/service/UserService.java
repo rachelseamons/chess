@@ -15,6 +15,10 @@ public class UserService {
         }
     }
     public Object registerUser(UserData user) {
+        if (dataAccess.getUserByUsername(user.username()) == null) {
+            return null;
+        }
+
         return user;
     }
 }

@@ -71,7 +71,13 @@ public class Handler {
 
         //TODO:: add try-catch block to handle syntax errors in requests
         // actually specs say to do that in the server class, so GAH
+        // go re-read specs to see if you can do some error handling here
         var confirmation = userService.registerUser(user);
+        if (confirmation == null) {
+            response.status(403);
+            var message= "Error: already taken";
+            return new Gson().toJson(message);
+        }
         return new Gson().toJson(confirmation);
     }
 }
