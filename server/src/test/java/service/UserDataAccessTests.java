@@ -8,13 +8,23 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class UserDataAccessTests {
-    UserDataAccess dataAccess = new UserMemoryDAO();
+    private UserDataAccess dataAccess = new UserMemoryDAO();
+    private UserData Fred = new UserData("Fred","password","@me");
 
     @Test
-    @DisplayName("getUserByUsername with empty set")
+    @DisplayName("get user with empty set")
     public void emptySet() {
         Assertions.assertNull(dataAccess.getUserByUsername("test"));
     }
 
+    @Test
+    @DisplayName("add user Fred")
+    public void createFred() {
+        dataAccess.createUser(Fred);
+        Assertions.assertEquals("Fred", dataAccess.getUserByUsername("Fred"));
+    }
 }
