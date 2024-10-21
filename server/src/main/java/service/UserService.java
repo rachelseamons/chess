@@ -1,8 +1,11 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import dataaccess.UserMemoryDAO;
 import model.UserData;
+
+import javax.xml.crypto.Data;
 
 public class UserService {
     private UserDAO dataAccess;
@@ -15,9 +18,9 @@ public class UserService {
         }
     }
 
-    public Object registerUser(UserData user) {
-        if (dataAccess.getUserByUsername(user.username()) == null) {
-            return null;
+    public Object registerUser(UserData user) throws DataAccessException {
+        if (dataAccess.getUserByUsername(user.username()) != null) {
+            throw (new DataAccessException("403"));
         }
 
         dataAccess.createUser(user);

@@ -1,23 +1,34 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.UserDAO;
 import dataaccess.UserMemoryDAO;
 import model.UserData;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class UserServiceTests {
-    @BeforeAll
-    public static void init() {
-        UserService service = new UserService(false);
-        var Fred = new UserData("Fred", "password", "@me");
-    }
+    UserService service = new UserService(false);
+    UserData Fred = new UserData("Fred", "password", "@me");
 
     @Test
     @DisplayName("Register user")
-    public void registerUserSuccess() {
-        //TODO:: init is not persisting to here, so might need to use private class variables instead
+    public void registerUserSuccess() throws DataAccessException {
+        Assertions.assertEquals(Fred, service.registerUser(Fred));
+    }
+
+    @Test
+    @DisplayName("Fail to register existing user")
+    public void registerUserFail() throws DataAccessException {
         service.registerUser(Fred);
+        Exception exception = Assertions.assertThrows(DataAccessException.class, () ->
+                service.registerUser(Fred));
+
+        String expectedMessage = "403";
+        String actualMessage = exception.getMessage();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
     }
 }
