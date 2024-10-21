@@ -16,7 +16,7 @@ import java.util.Set;
 
 public class Handler {
     private UserService userService = new UserService(false);
-    private AuthService authService = new AuthService();
+    private AuthService authService = new AuthService(false);
     private GameService gameService = new GameService();
 
     public Object clear(Request request, Response response) throws DataAccessException {

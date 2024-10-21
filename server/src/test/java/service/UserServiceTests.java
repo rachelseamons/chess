@@ -10,8 +10,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class UserServiceTests {
-    UserService service = new UserService(false);
-    UserData Fred = new UserData("Fred", "password", "@me");
+    static private final UserService service = new UserService(false);
+    static private final UserData Fred = new UserData("Fred", "password", "@me");
 
     @Test
     @DisplayName("Register user")
