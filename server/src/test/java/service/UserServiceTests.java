@@ -15,7 +15,9 @@ public class UserServiceTests {
     @DisplayName("Register user")
     public void registerUserSuccess() throws DataAccessException {
         //TODO:: need clear so that if this runs second, it's not a problem
-        Assertions.assertEquals(userFred, service.registerUser(userFred));
+        var userAuth = service.registerUser(userFred);
+        Assertions.assertEquals(userFred.username(), userAuth.username());
+        Assertions.assertNotNull(userAuth.authToken());
     }
 
 
