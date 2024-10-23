@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-public class UserDAOTests {
+public class DataAccessTests {
     private DataAccess dataAccess = new MemoryDataAccess();
     private UserData Fred = new UserData("Fred", "password", "@me");
 
@@ -22,5 +22,13 @@ public class UserDAOTests {
     public void createFred() {
         dataAccess.createUser(Fred);
         Assertions.assertEquals("Fred", dataAccess.getUserByUsername("Fred"));
+    }
+
+    @Test
+    @DisplayName("clear database")
+    public void clearDatabase() {
+        dataAccess.clear();
+        //Assertions.assertTrue(dataAccess.users.isEmpty());
+        //TODO:: is there a way to access the private variables of dataAccess to check things like this?
     }
 }

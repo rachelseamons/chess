@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.UUID;
 public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
     private final Map<String, AuthData> auths = new HashMap<>();
+    //private final Map<int, GameData> games = new HashMap<>();
 
     public UserData getUserByUsername(String username) {
         if (users.containsKey(username)) {
@@ -30,7 +32,12 @@ public class MemoryDataAccess implements DataAccess {
         return newData;
     }
 
-    public static String generateToken() {
+    private static String generateToken() {
         return UUID.randomUUID().toString();
+    }
+
+    public void clear() {
+        users.clear();
+        auths.clear();
     }
 }

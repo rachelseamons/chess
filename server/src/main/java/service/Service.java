@@ -19,4 +19,8 @@ public class Service {
         var registeredUser = dataAccess.createUser(user);
         return dataAccess.createAuth(registeredUser.username());
     }
+
+    public void clear() {
+        dataAccess.clear();
+    }
 }

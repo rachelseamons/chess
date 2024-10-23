@@ -9,4 +9,6 @@ public interface DataAccess {
     UserData createUser(UserData user);
 
     AuthData createAuth(String username);
+
+    void clear();
 }
