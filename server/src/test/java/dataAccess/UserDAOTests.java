@@ -1,14 +1,14 @@
 package dataAccess;
 
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryDAO;
+import dataaccess.DataAccess;
+import dataaccess.MemoryDataAccess;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class UserDAOTests {
-    private UserDAO dataAccess = new UserMemoryDAO();
+    private DataAccess dataAccess = new MemoryDataAccess();
     private UserData Fred = new UserData("Fred", "password", "@me");
 
     @Test

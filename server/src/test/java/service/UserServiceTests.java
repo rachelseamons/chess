@@ -1,30 +1,30 @@
 package service;
 
 import dataaccess.DataAccessException;
-import dataaccess.UserDAO;
-import dataaccess.UserMemoryDAO;
+import dataaccess.MemoryDataAccess;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class UserServiceTests {
-    static private final UserService service = new UserService(false);
-    static private final UserData Fred = new UserData("Fred", "password", "@me");
+    static private final Service service = new Service(new MemoryDataAccess());
+    static private final UserData userFred = new UserData("Fred", "password", "@me");
 
     @Test
     @DisplayName("Register user")
     public void registerUserSuccess() throws DataAccessException {
-        Assertions.assertEquals(Fred, service.registerUser(Fred));
+        //TODO:: need clear so that if this runs second, it's not a problem
+        Assertions.assertEquals(userFred, service.registerUser(userFred));
     }
+
 
     @Test
     @DisplayName("Fail to register existing user")
     public void registerUserFail() throws DataAccessException {
-        service.registerUser(Fred);
+        service.registerUser(userFred);
         Exception exception = Assertions.assertThrows(DataAccessException.class, () ->
-                service.registerUser(Fred));
+                service.registerUser(userFred));
 
         String expectedMessage = "403";
         String actualMessage = exception.getMessage();

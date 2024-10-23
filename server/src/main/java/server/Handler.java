@@ -1,23 +1,20 @@
 package server;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryDataAccess;
 import model.GameData;
 import model.UserData;
-import service.AuthService;
-import service.GameService;
-import service.UserService;
+import service.Service;
 import spark.Request;
 import spark.Response;
 
-import java.util.Map;
-import java.util.Set;
-
 public class Handler {
-    private UserService userService = new UserService(false);
-    private AuthService authService = new AuthService(false);
-    private GameService gameService = new GameService();
+    private Service userService;
+
+    public Handler() {
+        userService = new Service(new MemoryDataAccess());
+    }
 
     public Object clear(Request request, Response response) throws DataAccessException {
         return new Gson().toJson("clear");
@@ -63,12 +60,11 @@ public class Handler {
         var user = new Gson().fromJson(request.body(), UserData.class);
 
         if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new DataAccessException("Error: bad request");
+            throw new DataAccessException("400");
         }
 
-        userService.registerUser(user);
+        var userAuth = userService.registerUser(user);
 
-        var result = authService.createAuth(user.username());
-        return new Gson().toJson(result);
+        return new Gson().toJson(userAuth);
     }
 }
