@@ -1,6 +1,5 @@
 package service;
 
-import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import model.UserData;
 import org.junit.jupiter.api.Assertions;
@@ -36,6 +35,7 @@ public class ServiceTests {
         int actualStatus = exception.getStatus();
 
         Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
     }
 
     @Test

@@ -8,8 +8,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 public class DataAccessTests {
-    private DataAccess dataAccess = new MemoryDataAccess();
-    private UserData Fred = new UserData("Fred", "password", "@me");
+    private final DataAccess dataAccess = new MemoryDataAccess();
+    private final UserData userFred = new UserData("Fred", "password", "@me");
 
     @Test
     @DisplayName("get user with empty set")
@@ -20,7 +20,7 @@ public class DataAccessTests {
     @Test
     @DisplayName("add user Fred")
     public void createFred() {
-        dataAccess.createUser(Fred);
+        dataAccess.createUser(userFred);
         Assertions.assertEquals("Fred", dataAccess.getUserByUsername("Fred").username());
     }
 
@@ -30,5 +30,6 @@ public class DataAccessTests {
         dataAccess.clear();
         //Assertions.assertTrue(dataAccess.users.isEmpty());
         //TODO:: is there a way to access the private variables of dataAccess to check things like this?
+        // nope, just have to do it manually
     }
 }

@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import model.GameData;
 import model.UserData;
 import service.ChessException;
 import service.Service;
@@ -12,7 +13,7 @@ import java.util.HashMap;
 
 public class Server {
     private final Gson serializer = new Gson();
-    private Service service = new Service(new MemoryDataAccess());
+    private final Service service = new Service(new MemoryDataAccess());
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -38,23 +39,36 @@ public class Server {
 
 
     private Object joinGame(Request request, Response response) {
-        return null;
+        var authToken = request.headers("Authorization");
+        //TODO:: I have no clue how to get the info from the request, short of creating another record
+        return new Gson().toJson("join game");
     }
 
     private Object createGame(Request request, Response response) {
-        return null;
+        var authToken = request.headers("Authorization");
+        var game = new Gson().fromJson(request.body(), GameData.class);
+
+        return new Gson().toJson("create game");
     }
 
     private Object getGames(Request request, Response response) {
-        return null;
+        var authToken = request.headers("Authorization");
+        return new Gson().toJson("get games");
     }
 
     private Object logoutUser(Request request, Response response) {
-        return null;
+        var authToken = request.headers("Authorization");
+        return new Gson().toJson("logout");
     }
 
-    private Object loginUser(Request request, Response response) {
-        return null;
+    private Object loginUser(Request request, Response response) throws ChessException {
+        var user = new Gson().fromJson(request.body(), UserData.class);
+
+        if (user.username() == null || user.password() == null) {
+            throw new ChessException("bad request", 400);
+        }
+
+        return new Gson().toJson(user);
     }
 
     private Object clear(Request request, Response response) {
@@ -75,13 +89,14 @@ public class Server {
     }
 
     private void exceptionHandler(Exception ex, Request req, Response res) {
-        //TODO:: handle all exceptions
+        //TODO:: figure out why the tests don't like this response form despite pulling the string out correctly
         if (ex instanceof ChessException) {
             res.status(((ChessException) ex).getStatus());
-            res.body("Error: " + ex.getMessage());
+            String returnMessage = "Error: " + ex.getMessage();
+            res.body(serializer.toJson(returnMessage));
         } else {
             res.status(500);
-            res.body("Error: (description of error)");
+            res.body(serializer.toJson("Error: (description of error)"));
         }
     }
 
