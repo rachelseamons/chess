@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.MemoryDataAccess;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,6 +12,7 @@ public class ServiceTests {
     static private final UserData userFred = new UserData("Fred", "password", "@me");
     static private final UserData userSue = new UserData("Sue", "pass", "@you");
     static private final UserData loginFred = new UserData("Fred", "password", null);
+    static private final UserData wrongPasswordSue = new UserData("Sue", "Pass", null);
 
     @Test
     @DisplayName("Successful register user")
@@ -74,6 +76,24 @@ public class ServiceTests {
         service.clear();
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
                 service.loginUser(userFred));
+
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("Login wrong password")
+    public void loginWrongPassword() throws ChessException {
+        service.clear();
+        service.registerUser(userSue);
+
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.loginUser(wrongPasswordSue));
 
         String expectedMessage = "unauthorized";
         String actualMessage = exception.getMessage();
