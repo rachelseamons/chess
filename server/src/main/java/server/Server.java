@@ -11,7 +11,6 @@ import spark.*;
 import java.util.HashMap;
 
 public class Server {
-    private Handler handler = new Handler();
     private final Gson serializer = new Gson();
     private Service service = new Service(new MemoryDataAccess());
 
@@ -63,11 +62,11 @@ public class Server {
         return serializer.toJson(new HashMap<>());
     }
 
-    private Object registerUser(Request request, Response response) throws DataAccessException {
+    private Object registerUser(Request request, Response response) throws ChessException {
         var user = new Gson().fromJson(request.body(), UserData.class);
 
         if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new DataAccessException("400");
+            throw new ChessException("bad request", 400);
         }
 
         var userAuth = service.registerUser(user);
@@ -76,13 +75,14 @@ public class Server {
     }
 
     private void exceptionHandler(Exception ex, Request req, Response res) {
+        //TODO:: handle all exceptions
         if (ex instanceof ChessException) {
-            if (ex.getMessage().equals("Error")) {
-                //TODO:: add if blocks for all your messages
-                res.status(400);
-            }
+            res.status(((ChessException) ex).getStatus());
+            res.body("Error: " + ex.getMessage());
+        } else {
+            res.status(500);
+            res.body("Error: (description of error)");
         }
-        res.body("Error: " + ex.getMessage());
     }
 
     public int port() {

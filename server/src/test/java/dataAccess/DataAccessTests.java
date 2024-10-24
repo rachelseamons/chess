@@ -21,7 +21,7 @@ public class DataAccessTests {
     @DisplayName("add user Fred")
     public void createFred() {
         dataAccess.createUser(Fred);
-        Assertions.assertEquals("Fred", dataAccess.getUserByUsername("Fred"));
+        Assertions.assertEquals("Fred", dataAccess.getUserByUsername("Fred").username());
     }
 
     @Test

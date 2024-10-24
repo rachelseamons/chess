@@ -12,9 +12,9 @@ public class Service {
         this.dataAccess = dataAccess;
     }
 
-    public AuthData registerUser(UserData user) throws DataAccessException {
+    public AuthData registerUser(UserData user) throws ChessException {
         if (dataAccess.getUserByUsername(user.username()) != null) {
-            throw (new DataAccessException("403"));
+            throw (new ChessException("already taken", 403));
         }
         var registeredUser = dataAccess.createUser(user);
         return dataAccess.createAuth(registeredUser.username());

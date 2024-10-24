@@ -14,7 +14,7 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Register user")
-    public void registerUserSuccess() throws DataAccessException {
+    public void registerUserSuccess() throws ChessException {
         service.clear();
         var userAuth = service.registerUser(userFred);
         Assertions.assertEquals(userFred.username(), userAuth.username());
@@ -24,27 +24,29 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Fail to register existing user")
-    public void registerUserFail() throws DataAccessException {
+    public void registerUserFail() throws ChessException {
         service.clear();
         service.registerUser(userFred);
-        Exception exception = Assertions.assertThrows(DataAccessException.class, () ->
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
                 service.registerUser(userFred));
 
-        String expectedMessage = "403";
+        String expectedMessage = "already taken";
         String actualMessage = exception.getMessage();
+        int expectedStatus = 403;
+        int actualStatus = exception.getStatus();
 
         Assertions.assertEquals(expectedMessage, actualMessage);
     }
 
     @Test
     @DisplayName("Clear database")
-    public void clearDatabase() throws DataAccessException {
+    public void clearDatabase() throws ChessException {
         //TODO:: add stuff first so you can prove it's being cleared, update as you implement functions like
         // getUserByAuth
         service.clear();
 
         Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
-        Assertions.assertThrows(DataAccessException.class, () ->
+        Assertions.assertThrows(ChessException.class, () ->
                 service.registerUser(userFred));
 
         var userAuth = service.registerUser(userSue);
