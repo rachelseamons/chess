@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import model.AuthData;
 import model.GameData;
 import model.UserData;
 import service.Service;
@@ -56,15 +57,13 @@ public class Handler {
         return new Gson().toJson(user);
     }
 
-    public Object registerUser(Request request) throws DataAccessException {
+    public AuthData registerUser(Request request) throws DataAccessException {
         var user = new Gson().fromJson(request.body(), UserData.class);
 
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new DataAccessException("400");
         }
 
-        var userAuth = userService.registerUser(user);
-
-        return new Gson().toJson(userAuth);
+        return userService.registerUser(user);
     }
 }

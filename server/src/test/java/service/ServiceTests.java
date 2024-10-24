@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 public class ServiceTests {
     static private final Service service = new Service(new MemoryDataAccess());
     static private final UserData userFred = new UserData("Fred", "password", "@me");
+    static private final UserData userSue = new UserData("Sue", "pass", "@you");
 
     @Test
     @DisplayName("Register user")
@@ -37,8 +38,19 @@ public class ServiceTests {
 
     @Test
     @DisplayName("Clear database")
-    public void clearDatabase() {
+    public void clearDatabase() throws DataAccessException {
+        //TODO:: add stuff first so you can prove it's being cleared, update as you implement functions like
+        // getUserByAuth
         service.clear();
+
+        Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
+        Assertions.assertThrows(DataAccessException.class, () ->
+                service.registerUser(userFred));
+
+        var userAuth = service.registerUser(userSue);
+        Assertions.assertEquals(userSue.username(), userAuth.username());
+
+        Assertions.assertDoesNotThrow(service::clear);
         Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
     }
 }

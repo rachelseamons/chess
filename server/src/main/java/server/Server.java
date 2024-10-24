@@ -2,11 +2,18 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
+import dataaccess.MemoryDataAccess;
 import model.UserData;
+import service.ChessException;
+import service.Service;
 import spark.*;
+
+import java.util.HashMap;
 
 public class Server {
     private Handler handler = new Handler();
+    private final Gson serializer = new Gson();
+    private Service service = new Service(new MemoryDataAccess());
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
@@ -24,13 +31,12 @@ public class Server {
         //This line initializes the server and can be removed once you have a functioning endpoint 
         Spark.init();
 
+        Spark.exception(Exception.class, this::exceptionHandler);
+
         Spark.awaitInitialization();
         return Spark.port();
     }
 
-    private Object clear(Request request, Response response) {
-        return null;
-    }
 
     private Object joinGame(Request request, Response response) {
         return null;
@@ -52,20 +58,31 @@ public class Server {
         return null;
     }
 
+    private Object clear(Request request, Response response) {
+        service.clear();
+        return serializer.toJson(new HashMap<>());
+    }
+
     private Object registerUser(Request request, Response response) throws DataAccessException {
-        //TODO:: attempt at an example of an error-handling block,
-        // I don't think this is fully right. Add other messages to if-else in the catch though
-        try {
-            return handler.registerUser(request);
-        } catch (DataAccessException fail) {
-            if (fail.getMessage() == "403") {
-                response.status(403);
-                return new Gson().toJson("Error: already taken");
-            } else {
-                response.status(500);
-                return new Gson().toJson("Error: (description of error)");
+        var user = new Gson().fromJson(request.body(), UserData.class);
+
+        if (user.username() == null || user.password() == null || user.email() == null) {
+            throw new DataAccessException("400");
+        }
+
+        var userAuth = service.registerUser(user);
+
+        return serializer.toJson(userAuth);
+    }
+
+    private void exceptionHandler(Exception ex, Request req, Response res) {
+        if (ex instanceof ChessException) {
+            if (ex.getMessage().equals("Error")) {
+                //TODO:: add if blocks for all your messages
+                res.status(400);
             }
         }
+        res.body("Error: " + ex.getMessage());
     }
 
     public int port() {
