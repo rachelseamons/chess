@@ -10,6 +10,7 @@ import service.Service;
 import spark.*;
 
 import java.util.HashMap;
+import java.util.Map;
 
 public class Server {
     private final Gson serializer = new Gson();
@@ -94,7 +95,8 @@ public class Server {
         if (ex instanceof ChessException) {
             res.status(((ChessException) ex).getStatus());
             String returnMessage = "Error: " + ex.getMessage();
-            res.body(serializer.toJson(returnMessage));
+            Map<String, String> body = Map.of("message", returnMessage);
+            res.body(serializer.toJson(body));
         } else {
             res.status(500);
             res.body(serializer.toJson("Error: (description of error)"));
