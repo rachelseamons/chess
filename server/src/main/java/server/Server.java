@@ -69,7 +69,7 @@ public class Server {
         }
 
         var userAuth = service.loginUser(user);
-        return new Gson().toJson(user);
+        return new Gson().toJson(userAuth);
     }
 
     private Object clear(Request request, Response response) {
