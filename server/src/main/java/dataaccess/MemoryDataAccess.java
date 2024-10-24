@@ -3,6 +3,7 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import service.ChessException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,5 +40,9 @@ public class MemoryDataAccess implements DataAccess {
     public void clear() {
         users.clear();
         auths.clear();
+    }
+
+    public boolean verifyUser(UserData user) {
+        return users.containsKey(user.username()) && users.get(user.username()).password().equals(user.password());
     }
 }

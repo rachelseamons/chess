@@ -10,9 +10,10 @@ public class ServiceTests {
     static private final Service service = new Service(new MemoryDataAccess());
     static private final UserData userFred = new UserData("Fred", "password", "@me");
     static private final UserData userSue = new UserData("Sue", "pass", "@you");
+    static private final UserData loginFred = new UserData("Fred", "password", null);
 
     @Test
-    @DisplayName("Register user")
+    @DisplayName("Successful register user")
     public void registerUserSuccess() throws ChessException {
         service.clear();
         var userAuth = service.registerUser(userFred);
@@ -54,5 +55,32 @@ public class ServiceTests {
 
         Assertions.assertDoesNotThrow(service::clear);
         Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
+    }
+
+    @Test
+    @DisplayName("Successful login")
+    public void successfulLogin() throws ChessException {
+        service.clear();
+        service.registerUser(userFred);
+
+        var userAuth = service.loginUser(userFred);
+        Assertions.assertEquals(userFred.username(), userAuth.username());
+        Assertions.assertNotNull(userAuth.authToken());
+    }
+
+    @Test
+    @DisplayName("Login non-existent user")
+    public void loginBadUser() throws ChessException {
+        service.clear();
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.loginUser(userFred));
+
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
     }
 }

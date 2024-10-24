@@ -11,4 +11,6 @@ public interface DataAccess {
     AuthData createAuth(String username);
 
     void clear();
+
+    boolean verifyUser(UserData user);
 }

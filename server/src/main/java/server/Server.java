@@ -68,6 +68,7 @@ public class Server {
             throw new ChessException("bad request", 400);
         }
 
+        var userAuth = service.loginUser(user);
         return new Gson().toJson(user);
     }
 
