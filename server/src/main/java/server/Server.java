@@ -9,6 +9,7 @@ import service.ChessException;
 import service.Service;
 import spark.*;
 
+import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,15 +46,22 @@ public class Server {
         return new Gson().toJson("join game");
     }
 
-    private Object createGame(Request request, Response response) {
+    private Object createGame(Request request, Response response) throws ChessException {
         var authToken = request.headers("Authorization");
         var game = new Gson().fromJson(request.body(), GameData.class);
 
-        return new Gson().toJson("create game");
+        if (game.gameName() == null) {
+            throw new ChessException("bad request", 400);
+        }
+
+        var gameID = service.createGame(authToken, game);
+
+        return new Gson().toJson(gameID);
     }
 
     private Object getGames(Request request, Response response) {
         var authToken = request.headers("Authorization");
+
         return new Gson().toJson("get games");
     }
 

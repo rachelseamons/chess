@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.DataAccess;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 import java.util.Objects;
@@ -39,5 +40,13 @@ public class Service {
         }
 
         dataAccess.logoutUser(authToken);
+    }
+
+    public GameData createGame(String authToken, GameData game) throws ChessException {
+        if (dataAccess.getUserByAuthtoken(authToken) == null) {
+            throw new ChessException("unauthorized", 401);
+        }
+
+        return dataAccess.createGame(game);
     }
 }

@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -13,6 +14,7 @@ public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
     private final Map<String, AuthData> auths = new HashMap<>();
     private final Map<Integer, GameData> games = new HashMap<>();
+    private Integer currGameID = 15;
 
     public UserData getUserByUsername(String username) {
         if (users.containsKey(username)) {
@@ -55,5 +57,15 @@ public class MemoryDataAccess implements DataAccess {
 
     public void logoutUser(String authToken) {
         auths.remove(authToken);
+    }
+
+
+    public GameData createGame(GameData game) {
+        var gameID = currGameID;
+        currGameID = currGameID + 1;
+        var newGame = new GameData(gameID, null, null, game.gameName(), new ChessGame());
+        games.put(gameID, newGame);
+
+        return newGame;
     }
 }

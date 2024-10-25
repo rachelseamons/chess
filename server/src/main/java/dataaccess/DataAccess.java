@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 
 public interface DataAccess {
@@ -17,4 +18,6 @@ public interface DataAccess {
     AuthData getUserByAuthtoken(String authToken);
 
     void logoutUser(String authToken);
+
+    GameData createGame(GameData game);
 }
