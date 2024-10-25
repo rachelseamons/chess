@@ -13,4 +13,8 @@ public interface DataAccess {
     void clear();
 
     boolean verifyUser(UserData user);
+
+    AuthData getUserByAuthtoken(String authToken);
+
+    void logoutUser(String authToken);
 }

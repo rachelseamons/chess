@@ -32,4 +32,12 @@ public class Service {
 
         return dataAccess.createAuth(user.username());
     }
+
+    public void logoutUser(String authToken) throws ChessException {
+        if (dataAccess.getUserByAuthtoken(authToken) == null) {
+            throw new ChessException("unauthorized", 401);
+        }
+
+        dataAccess.logoutUser(authToken);
+    }
 }

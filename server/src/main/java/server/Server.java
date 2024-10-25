@@ -57,9 +57,11 @@ public class Server {
         return new Gson().toJson("get games");
     }
 
-    private Object logoutUser(Request request, Response response) {
+    private Object logoutUser(Request request, Response response) throws ChessException {
         var authToken = request.headers("Authorization");
-        return new Gson().toJson("logout");
+
+        service.logoutUser(authToken);
+        return serializer.toJson(null);
     }
 
     private Object loginUser(Request request, Response response) throws ChessException {
@@ -91,7 +93,6 @@ public class Server {
     }
 
     private void exceptionHandler(Exception ex, Request req, Response res) {
-        //TODO:: figure out why the tests don't like this response form despite pulling the string out correctly
         if (ex instanceof ChessException) {
             res.status(((ChessException) ex).getStatus());
             String returnMessage = "Error: " + ex.getMessage();

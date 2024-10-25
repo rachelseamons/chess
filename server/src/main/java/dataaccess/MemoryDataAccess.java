@@ -45,4 +45,15 @@ public class MemoryDataAccess implements DataAccess {
     public boolean verifyUser(UserData user) {
         return users.containsKey(user.username()) && users.get(user.username()).password().equals(user.password());
     }
+
+    public AuthData getUserByAuthtoken(String authToken) {
+        if (auths.containsKey(authToken)) {
+            return auths.get(authToken);
+        }
+        return null;
+    }
+
+    public void logoutUser(String authToken) {
+        auths.remove(authToken);
+    }
 }
