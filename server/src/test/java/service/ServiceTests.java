@@ -1,5 +1,6 @@
 package service;
 
+import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
 import model.GameData;
 import model.UserData;
@@ -7,6 +8,7 @@ import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import server.JoinRequest;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -173,7 +175,7 @@ public class ServiceTests {
         var userAuth = service.registerUser(userFred);
         var games = service.listGames(userAuth.authToken());
 
-        Assertions.assertEquals(new ArrayList<>(), games);
+        Assertions.assertEquals(new HashSet<>(), games);
     }
 
     @Test
@@ -211,5 +213,51 @@ public class ServiceTests {
 
         Assertions.assertEquals(401, exception.getStatus());
         Assertions.assertEquals("unauthorized", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("successful game joins")
+    public void joinGameSuccesses() throws ChessException {
+        service.clear();
+        var fredAuth = service.registerUser(userFred).authToken();
+        var sueAuth = service.registerUser(userSue).authToken();
+        var gameID = service.createGame(fredAuth, goodGame1).gameID();
+
+        JoinRequest joinFredAsBlack = new JoinRequest("BLACK", gameID);
+        JoinRequest joinSueAsWhite = new JoinRequest("WHITE", gameID);
+
+        Assertions.assertDoesNotThrow(() -> service.joinGame(fredAuth, joinFredAsBlack));
+        Assertions.assertDoesNotThrow(() -> service.joinGame(sueAuth, joinSueAsWhite));
+
+        GameData expectedGame = new GameData(gameID, "Sue", "Fred", "myGame", new ChessGame());
+
+        GameData actualGame = new GameData(0, null, null, null, null);
+        for (GameData game : service.listGames(fredAuth)) {
+            actualGame = game;
+        }
+
+        Assertions.assertEquals(expectedGame.gameID(), actualGame.gameID());
+        Assertions.assertEquals(expectedGame.whiteUsername(), actualGame.whiteUsername());
+        Assertions.assertEquals(expectedGame.blackUsername(), actualGame.blackUsername());
+        Assertions.assertEquals(expectedGame.gameName(), actualGame.gameName());
+    }
+
+    @Test
+    @DisplayName("color already taken")
+    public void badJoin() throws ChessException {
+        service.clear();
+        var fredAuth = service.registerUser(userFred).authToken();
+        var sueAuth = service.registerUser(userSue).authToken();
+        var gameID = service.createGame(fredAuth, goodGame1).gameID();
+
+        JoinRequest joinFredAsBlack = new JoinRequest("BLACK", gameID);
+        JoinRequest joinSueAsBlack = new JoinRequest("BLACK", gameID);
+
+        Assertions.assertDoesNotThrow(() -> service.joinGame(fredAuth, joinFredAsBlack));
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.joinGame(sueAuth, joinSueAsBlack));
+
+        Assertions.assertEquals(403, exception.getStatus());
+        Assertions.assertEquals("already taken", exception.getMessage());
     }
 }
