@@ -103,4 +103,30 @@ public class ServiceTests {
         Assertions.assertEquals(expectedMessage, actualMessage);
         Assertions.assertEquals(expectedStatus, actualStatus);
     }
+
+    @Test
+    @DisplayName("Successful logout")
+    public void logoutSuccess() throws ChessException {
+        service.clear();
+        var firstAuth = service.registerUser(userFred);
+
+        Assertions.assertDoesNotThrow(() -> service.logoutUser(firstAuth.authToken()));
+        var secondAuth = Assertions.assertDoesNotThrow(() -> service.loginUser(userFred));
+        Assertions.assertDoesNotThrow(() -> service.logoutUser(secondAuth.authToken()));
+    }
+
+    @Test
+    @DisplayName("Logout twice")
+    public void logoutTwice() throws ChessException {
+        service.clear();
+
+        var userAuth = service.registerUser(userFred);
+
+        Assertions.assertDoesNotThrow(() -> service.logoutUser(userAuth.authToken()));
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.logoutUser(userAuth.authToken()));
+
+        Assertions.assertEquals(exception.getStatus(), 401);
+        Assertions.assertEquals(exception.getMessage(), "unauthorized");
+    }
 }

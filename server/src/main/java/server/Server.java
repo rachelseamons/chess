@@ -100,7 +100,7 @@ public class Server {
             res.body(serializer.toJson(body));
         } else {
             res.status(500);
-            res.body(serializer.toJson("Error: (description of error)"));
+            res.body(serializer.toJson(Map.of("message", "Error: (description of error)")));
         }
     }
 
