@@ -4,6 +4,8 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.util.List;
+
 public interface DataAccess {
     UserData getUserByUsername(String username);
 
@@ -20,4 +22,6 @@ public interface DataAccess {
     void logoutUser(String authToken);
 
     GameData createGame(GameData game);
+
+    List<GameData> listGames();
 }

@@ -6,9 +6,7 @@ import model.GameData;
 import model.UserData;
 import service.ChessException;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class MemoryDataAccess implements DataAccess {
     private final Map<String, UserData> users = new HashMap<>();
@@ -42,6 +40,7 @@ public class MemoryDataAccess implements DataAccess {
     public void clear() {
         users.clear();
         auths.clear();
+        games.clear();
     }
 
     public boolean verifyUser(UserData user) {
@@ -59,7 +58,6 @@ public class MemoryDataAccess implements DataAccess {
         auths.remove(authToken);
     }
 
-
     public GameData createGame(GameData game) {
         var gameID = currGameID;
         currGameID = currGameID + 1;
@@ -67,5 +65,14 @@ public class MemoryDataAccess implements DataAccess {
         games.put(gameID, newGame);
 
         return newGame;
+    }
+
+    public List<GameData> listGames() {
+        List<GameData> allGames = new ArrayList<>();
+        for (GameData game : games.values()) {
+            allGames.add(game);
+        }
+
+        return allGames;
     }
 }

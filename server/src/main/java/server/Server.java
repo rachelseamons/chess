@@ -54,15 +54,16 @@ public class Server {
             throw new ChessException("bad request", 400);
         }
 
-        var gameID = service.createGame(authToken, game);
+        var createdGame = service.createGame(authToken, game);
 
-        return new Gson().toJson(gameID);
+        return new Gson().toJson(createdGame);
     }
 
-    private Object getGames(Request request, Response response) {
+    private Object getGames(Request request, Response response) throws ChessException {
         var authToken = request.headers("Authorization");
 
-        return new Gson().toJson("get games");
+        var gameList = service.listGames(authToken);
+        return new Gson().toJson(Map.of("games", gameList));
     }
 
     private Object logoutUser(Request request, Response response) throws ChessException {

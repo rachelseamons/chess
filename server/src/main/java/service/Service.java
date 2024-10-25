@@ -5,6 +5,7 @@ import model.AuthData;
 import model.GameData;
 import model.UserData;
 
+import java.util.List;
 import java.util.Objects;
 
 public class Service {
@@ -48,5 +49,13 @@ public class Service {
         }
 
         return dataAccess.createGame(game);
+    }
+
+    public List<GameData> listGames(String authToken) throws ChessException {
+        if (dataAccess.getUserByAuthtoken(authToken) == null) {
+            throw new ChessException("unauthorized", 401);
+        }
+
+        return dataAccess.listGames();
     }
 }
