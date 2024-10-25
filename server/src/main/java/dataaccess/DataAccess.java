@@ -6,7 +6,6 @@ import model.UserData;
 import server.JoinRequest;
 import service.ChessException;
 
-import java.util.List;
 import java.util.Set;
 
 public interface DataAccess {

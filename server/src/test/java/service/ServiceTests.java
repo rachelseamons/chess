@@ -4,15 +4,12 @@ import chess.ChessGame;
 import dataaccess.MemoryDataAccess;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import server.JoinRequest;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class ServiceTests {
@@ -79,7 +76,7 @@ public class ServiceTests {
         service.clear();
         service.registerUser(userFred);
 
-        var userAuth = service.loginUser(userFred);
+        var userAuth = service.loginUser(loginFred);
         Assertions.assertEquals(userFred.username(), userAuth.username());
         Assertions.assertNotNull(userAuth.authToken());
     }
@@ -89,7 +86,7 @@ public class ServiceTests {
     public void loginBadUser() throws ChessException {
         service.clear();
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.loginUser(userFred));
+                service.loginUser(loginFred));
 
         String expectedMessage = "unauthorized";
         String actualMessage = exception.getMessage();
@@ -151,7 +148,6 @@ public class ServiceTests {
         var userAuth = service.registerUser(userFred);
         var createdGame = service.createGame(userAuth.authToken(), goodGame1);
 
-        Assertions.assertNotNull(createdGame.gameID());
         Assertions.assertEquals(goodGame1.gameName(), createdGame.gameName());
     }
 

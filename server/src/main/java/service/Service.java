@@ -6,8 +6,6 @@ import model.GameData;
 import model.UserData;
 import server.JoinRequest;
 
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 public class Service {
