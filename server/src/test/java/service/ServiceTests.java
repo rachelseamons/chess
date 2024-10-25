@@ -1,6 +1,7 @@
 package service;
 
 import dataaccess.MemoryDataAccess;
+import model.GameData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
@@ -13,6 +14,12 @@ public class ServiceTests {
     static private final UserData userSue = new UserData("Sue", "pass", "@you");
     static private final UserData loginFred = new UserData("Fred", "password", null);
     static private final UserData wrongPasswordSue = new UserData("Sue", "Pass", null);
+    static private final GameData goodGame1 = new GameData(0, null, null,
+            "myGame", null);
+    static private final GameData badGame = new GameData(0, null, null,
+            null, null);
+    static private final GameData goodGame2 = new GameData(0, null, null,
+            "game 2", null);
 
     @Test
     @DisplayName("Successful register user")
@@ -126,7 +133,31 @@ public class ServiceTests {
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
                 service.logoutUser(userAuth.authToken()));
 
-        Assertions.assertEquals(exception.getStatus(), 401);
-        Assertions.assertEquals(exception.getMessage(), "unauthorized");
+        Assertions.assertEquals(401, exception.getStatus());
+        Assertions.assertEquals("unauthorized", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Successful create")
+    public void createSuccess() throws ChessException {
+        service.clear();
+        var userAuth = service.registerUser(userFred);
+        var createdGame = service.createGame(userAuth.authToken(), goodGame1);
+
+        Assertions.assertNotNull(createdGame.gameID());
+        Assertions.assertEquals(goodGame1.gameName(), createdGame.gameName());
+    }
+
+    @Test
+    @DisplayName("unauthorized create")
+    public void unauthorizedCreate() throws ChessException {
+        service.clear();
+        var userAuth = service.registerUser(userFred);
+        service.logoutUser(userAuth.authToken());
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.createGame(userAuth.authToken(), badGame));
+
+        Assertions.assertEquals(401, exception.getStatus());
+        Assertions.assertEquals("unauthorized", exception.getMessage());
     }
 }
