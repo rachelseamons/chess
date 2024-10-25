@@ -3,8 +3,11 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import server.JoinRequest;
+import service.ChessException;
 
 import java.util.List;
+import java.util.Set;
 
 public interface DataAccess {
     UserData getUserByUsername(String username);
@@ -23,5 +26,7 @@ public interface DataAccess {
 
     GameData createGame(GameData game);
 
-    List<GameData> listGames();
+    Set<GameData> listGames();
+
+    void joinGame(JoinRequest request, String username) throws ChessException;
 }

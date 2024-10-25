@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import server.JoinRequest;
 import service.ChessException;
 
 import java.util.*;
@@ -67,12 +68,40 @@ public class MemoryDataAccess implements DataAccess {
         return newGame;
     }
 
-    public List<GameData> listGames() {
-        List<GameData> allGames = new ArrayList<>();
-        for (GameData game : games.values()) {
-            allGames.add(game);
-        }
+    public Set<GameData> listGames() {
+        return new HashSet<>(games.values());
+    }
 
-        return allGames;
+    public void joinGame(JoinRequest request, String username) throws ChessException {
+        var gameID = request.gameID();
+        var playerColor = request.playerColor();
+
+        if (!games.containsKey(request.gameID())) {
+            throw new ChessException("bad request", 400);
+        }
+        var gameName = games.get(gameID).gameName();
+
+        if (playerColor.equals("WHITE")) {
+            if (games.get(gameID).whiteUsername() != null) {
+                throw new ChessException("already taken", 403);
+            }
+
+            //if the game exists and white is available, add the user as whiteUsername
+            var blackPlayer = games.get(gameID).blackUsername();
+            var newGame = new GameData(gameID, username, blackPlayer, gameName, new ChessGame());
+            games.put(gameID, newGame);
+        } else if (playerColor.equals("BLACK")) {
+            if (games.get(gameID).blackUsername() != null) {
+                throw new ChessException("already taken", 403);
+            }
+
+            //if the game exists and black is available, add the user as blackUsername
+            var whitePlayer = games.get(gameID).whiteUsername();
+            var newGame = new GameData(gameID, whitePlayer, username, gameName, new ChessGame());
+            games.put(gameID, newGame);
+        } else {
+            //bad request if playerColor isn't BLACK or WHITE
+            throw new ChessException("bad request", 400);
+        }
     }
 }

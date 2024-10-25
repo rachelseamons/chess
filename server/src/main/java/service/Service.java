@@ -4,9 +4,11 @@ import dataaccess.DataAccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import server.JoinRequest;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class Service {
     private final DataAccess dataAccess;
@@ -51,11 +53,20 @@ public class Service {
         return dataAccess.createGame(game);
     }
 
-    public List<GameData> listGames(String authToken) throws ChessException {
+    public Set<GameData> listGames(String authToken) throws ChessException {
         if (dataAccess.getUserByAuthtoken(authToken) == null) {
             throw new ChessException("unauthorized", 401);
         }
 
         return dataAccess.listGames();
+    }
+
+    public void joinGame(String authToken, JoinRequest request) throws ChessException {
+        if (dataAccess.getUserByAuthtoken(authToken) == null) {
+            throw new ChessException("unauthorized", 401);
+        }
+        var username = dataAccess.getUserByAuthtoken(authToken).username();
+
+        dataAccess.joinGame(request, username);
     }
 }

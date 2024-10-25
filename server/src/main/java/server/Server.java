@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import model.GameData;
@@ -40,10 +41,16 @@ public class Server {
     }
 
 
-    private Object joinGame(Request request, Response response) {
+    private Object joinGame(Request request, Response response) throws ChessException {
         var authToken = request.headers("Authorization");
-        //TODO:: I have no clue how to get the info from the request, short of creating another record
-        return new Gson().toJson("join game");
+        var joinRequest = new Gson().fromJson(request.body(), JoinRequest.class);
+
+        if (joinRequest.gameID() == null || joinRequest.playerColor() == null) {
+            throw new ChessException("bad request", 400);
+        }
+
+        service.joinGame(authToken, joinRequest);
+        return new Gson().toJson(null);
     }
 
     private Object createGame(Request request, Response response) throws ChessException {
