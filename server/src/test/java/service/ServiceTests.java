@@ -8,6 +8,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 public class ServiceTests {
     static private final Service service = new Service(new MemoryDataAccess());
     static private final UserData userFred = new UserData("Fred", "password", "@me");
@@ -156,6 +161,53 @@ public class ServiceTests {
         service.logoutUser(userAuth.authToken());
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
                 service.createGame(userAuth.authToken(), badGame));
+
+        Assertions.assertEquals(401, exception.getStatus());
+        Assertions.assertEquals("unauthorized", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("list no games")
+    public void listNoGames() throws ChessException {
+        service.clear();
+        var userAuth = service.registerUser(userFred);
+        var games = service.listGames(userAuth.authToken());
+
+        Assertions.assertEquals(new ArrayList<>(), games);
+    }
+
+    @Test
+    @DisplayName("list multiple games")
+    public void listMultipleGames() throws ChessException {
+        service.clear();
+        var userAuth = service.registerUser(userFred);
+        service.createGame(userAuth.authToken(), goodGame1);
+        service.createGame(userAuth.authToken(), goodGame2);
+
+        var returnedGames = service.listGames(userAuth.authToken());
+        Set<String> returnedNames = new HashSet<>();
+        for (GameData game : returnedGames) {
+            returnedNames.add(game.gameName());
+        }
+
+        Set<String> expectedNames = new HashSet<>();
+        expectedNames.add(goodGame1.gameName());
+        expectedNames.add(goodGame2.gameName());
+
+        Assertions.assertEquals(expectedNames, returnedNames);
+    }
+
+    @Test
+    @DisplayName("unauthorized list")
+    public void unauthorizedListGames() throws ChessException {
+        service.clear();
+        var userAuth = service.registerUser(userFred);
+        service.createGame(userAuth.authToken(), goodGame1);
+        service.createGame(userAuth.authToken(), goodGame2);
+
+        service.logoutUser(userAuth.authToken());
+        ChessException exception = Assertions.assertThrows(ChessException.class, () ->
+                service.listGames(userAuth.authToken()));
 
         Assertions.assertEquals(401, exception.getStatus());
         Assertions.assertEquals("unauthorized", exception.getMessage());
