@@ -10,12 +10,12 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessBoard {
-    private final int BOARD_HEIGHT = 8;
-    private final int BOARD_WIDTH = 8;
+    private static final int BOARD_HEIGHT = 8;
+    private static final int BOARD_WIDTH = 8;
     private ChessPiece[][] board = new ChessPiece[BOARD_HEIGHT][BOARD_WIDTH];
 
     public ChessBoard() {
-        
+
     }
 
     /**
@@ -163,7 +163,7 @@ public class ChessBoard {
     public boolean equals(Object object) {
         if (this == object) return true;
         if (object == null || getClass() != object.getClass()) return false;
-        ChessBoard that = (ChessBoard)  object;
+        ChessBoard that = (ChessBoard) object;
         for (int i = 0; i < BOARD_WIDTH; i++) {
             for (int j = 0; j < BOARD_HEIGHT; j++) {
                 if (!(this.board[i][j] == null) && !(that.board[i][j] == null)

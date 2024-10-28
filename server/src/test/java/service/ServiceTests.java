@@ -13,24 +13,24 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ServiceTests {
-    static private final Service service = new Service(new MemoryDataAccess());
-    static private final UserData userFred = new UserData("Fred", "password", "@me");
-    static private final UserData userSue = new UserData("Sue", "pass", "@you");
-    static private final UserData loginFred = new UserData("Fred", "password", null);
-    static private final UserData wrongPasswordSue = new UserData("Sue", "Pass", null);
-    static private final GameData goodGame1 = new GameData(0, null, null,
+    static private final Service SERVICE = new Service(new MemoryDataAccess());
+    static private final UserData USER_FRED = new UserData("Fred", "password", "@me");
+    static private final UserData USER_SUE = new UserData("Sue", "pass", "@you");
+    static private final UserData LOGIN_FRED = new UserData("Fred", "password", null);
+    static private final UserData WRONG_PASSWORD_SUE = new UserData("Sue", "Pass", null);
+    static private final GameData GOOD_GAME_1 = new GameData(0, null, null,
             "myGame", null);
-    static private final GameData badGame = new GameData(0, null, null,
+    static private final GameData BAD_GAME = new GameData(0, null, null,
             null, null);
-    static private final GameData goodGame2 = new GameData(0, null, null,
+    static private final GameData GOOD_GAME_2 = new GameData(0, null, null,
             "game 2", null);
 
     @Test
     @DisplayName("Successful register user")
     public void registerUserSuccess() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        Assertions.assertEquals(userFred.username(), userAuth.username());
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        Assertions.assertEquals(USER_FRED.username(), userAuth.username());
         Assertions.assertNotNull(userAuth.authToken());
     }
 
@@ -38,10 +38,10 @@ public class ServiceTests {
     @Test
     @DisplayName("Fail to register existing user")
     public void registerUserFail() throws ChessException {
-        service.clear();
-        service.registerUser(userFred);
+        SERVICE.clear();
+        SERVICE.registerUser(USER_FRED);
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.registerUser(userFred));
+                SERVICE.registerUser(USER_FRED));
 
         String expectedMessage = "already taken";
         String actualMessage = exception.getMessage();
@@ -57,36 +57,36 @@ public class ServiceTests {
     public void clearDatabase() throws ChessException {
         //TODO:: add stuff first so you can prove it's being cleared, update as you implement functions like
         // getUserByAuth
-        service.clear();
+        SERVICE.clear();
 
-        Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
+        Assertions.assertDoesNotThrow(() -> SERVICE.registerUser(USER_FRED));
         Assertions.assertThrows(ChessException.class, () ->
-                service.registerUser(userFred));
+                SERVICE.registerUser(USER_FRED));
 
-        var userAuth = service.registerUser(userSue);
-        Assertions.assertEquals(userSue.username(), userAuth.username());
+        var userAuth = SERVICE.registerUser(USER_SUE);
+        Assertions.assertEquals(USER_SUE.username(), userAuth.username());
 
-        Assertions.assertDoesNotThrow(service::clear);
-        Assertions.assertDoesNotThrow(() -> service.registerUser(userFred));
+        Assertions.assertDoesNotThrow(SERVICE::clear);
+        Assertions.assertDoesNotThrow(() -> SERVICE.registerUser(USER_FRED));
     }
 
     @Test
     @DisplayName("Successful login")
     public void successfulLogin() throws ChessException {
-        service.clear();
-        service.registerUser(userFred);
+        SERVICE.clear();
+        SERVICE.registerUser(USER_FRED);
 
-        var userAuth = service.loginUser(loginFred);
-        Assertions.assertEquals(userFred.username(), userAuth.username());
+        var userAuth = SERVICE.loginUser(LOGIN_FRED);
+        Assertions.assertEquals(USER_FRED.username(), userAuth.username());
         Assertions.assertNotNull(userAuth.authToken());
     }
 
     @Test
     @DisplayName("Login non-existent user")
     public void loginBadUser() throws ChessException {
-        service.clear();
+        SERVICE.clear();
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.loginUser(loginFred));
+                SERVICE.loginUser(LOGIN_FRED));
 
         String expectedMessage = "unauthorized";
         String actualMessage = exception.getMessage();
@@ -100,11 +100,11 @@ public class ServiceTests {
     @Test
     @DisplayName("Login wrong password")
     public void loginWrongPassword() throws ChessException {
-        service.clear();
-        service.registerUser(userSue);
+        SERVICE.clear();
+        SERVICE.registerUser(USER_SUE);
 
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.loginUser(wrongPasswordSue));
+                SERVICE.loginUser(WRONG_PASSWORD_SUE));
 
         String expectedMessage = "unauthorized";
         String actualMessage = exception.getMessage();
@@ -118,24 +118,24 @@ public class ServiceTests {
     @Test
     @DisplayName("Successful logout")
     public void logoutSuccess() throws ChessException {
-        service.clear();
-        var firstAuth = service.registerUser(userFred);
+        SERVICE.clear();
+        var firstAuth = SERVICE.registerUser(USER_FRED);
 
-        Assertions.assertDoesNotThrow(() -> service.logoutUser(firstAuth.authToken()));
-        var secondAuth = Assertions.assertDoesNotThrow(() -> service.loginUser(userFred));
-        Assertions.assertDoesNotThrow(() -> service.logoutUser(secondAuth.authToken()));
+        Assertions.assertDoesNotThrow(() -> SERVICE.logoutUser(firstAuth.authToken()));
+        var secondAuth = Assertions.assertDoesNotThrow(() -> SERVICE.loginUser(USER_FRED));
+        Assertions.assertDoesNotThrow(() -> SERVICE.logoutUser(secondAuth.authToken()));
     }
 
     @Test
     @DisplayName("Logout twice")
     public void logoutTwice() throws ChessException {
-        service.clear();
+        SERVICE.clear();
 
-        var userAuth = service.registerUser(userFred);
+        var userAuth = SERVICE.registerUser(USER_FRED);
 
-        Assertions.assertDoesNotThrow(() -> service.logoutUser(userAuth.authToken()));
+        Assertions.assertDoesNotThrow(() -> SERVICE.logoutUser(userAuth.authToken()));
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.logoutUser(userAuth.authToken()));
+                SERVICE.logoutUser(userAuth.authToken()));
 
         Assertions.assertEquals(401, exception.getStatus());
         Assertions.assertEquals("unauthorized", exception.getMessage());
@@ -144,21 +144,21 @@ public class ServiceTests {
     @Test
     @DisplayName("Successful create")
     public void createSuccess() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        var createdGame = service.createGame(userAuth.authToken(), goodGame1);
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        var createdGame = SERVICE.createGame(userAuth.authToken(), GOOD_GAME_1);
 
-        Assertions.assertEquals(goodGame1.gameName(), createdGame.gameName());
+        Assertions.assertEquals(GOOD_GAME_1.gameName(), createdGame.gameName());
     }
 
     @Test
     @DisplayName("unauthorized create")
     public void unauthorizedCreate() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        service.logoutUser(userAuth.authToken());
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        SERVICE.logoutUser(userAuth.authToken());
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.createGame(userAuth.authToken(), badGame));
+                SERVICE.createGame(userAuth.authToken(), BAD_GAME));
 
         Assertions.assertEquals(401, exception.getStatus());
         Assertions.assertEquals("unauthorized", exception.getMessage());
@@ -167,9 +167,9 @@ public class ServiceTests {
     @Test
     @DisplayName("list no games")
     public void listNoGames() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        var games = service.listGames(userAuth.authToken());
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        var games = SERVICE.listGames(userAuth.authToken());
 
         Assertions.assertEquals(new HashSet<>(), games);
     }
@@ -177,20 +177,20 @@ public class ServiceTests {
     @Test
     @DisplayName("list multiple games")
     public void listMultipleGames() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        service.createGame(userAuth.authToken(), goodGame1);
-        service.createGame(userAuth.authToken(), goodGame2);
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        SERVICE.createGame(userAuth.authToken(), GOOD_GAME_1);
+        SERVICE.createGame(userAuth.authToken(), GOOD_GAME_2);
 
-        var returnedGames = service.listGames(userAuth.authToken());
+        var returnedGames = SERVICE.listGames(userAuth.authToken());
         Set<String> returnedNames = new HashSet<>();
         for (GameData game : returnedGames) {
             returnedNames.add(game.gameName());
         }
 
         Set<String> expectedNames = new HashSet<>();
-        expectedNames.add(goodGame1.gameName());
-        expectedNames.add(goodGame2.gameName());
+        expectedNames.add(GOOD_GAME_1.gameName());
+        expectedNames.add(GOOD_GAME_2.gameName());
 
         Assertions.assertEquals(expectedNames, returnedNames);
     }
@@ -198,14 +198,14 @@ public class ServiceTests {
     @Test
     @DisplayName("unauthorized list")
     public void unauthorizedListGames() throws ChessException {
-        service.clear();
-        var userAuth = service.registerUser(userFred);
-        service.createGame(userAuth.authToken(), goodGame1);
-        service.createGame(userAuth.authToken(), goodGame2);
+        SERVICE.clear();
+        var userAuth = SERVICE.registerUser(USER_FRED);
+        SERVICE.createGame(userAuth.authToken(), GOOD_GAME_1);
+        SERVICE.createGame(userAuth.authToken(), GOOD_GAME_2);
 
-        service.logoutUser(userAuth.authToken());
+        SERVICE.logoutUser(userAuth.authToken());
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.listGames(userAuth.authToken()));
+                SERVICE.listGames(userAuth.authToken()));
 
         Assertions.assertEquals(401, exception.getStatus());
         Assertions.assertEquals("unauthorized", exception.getMessage());
@@ -214,21 +214,21 @@ public class ServiceTests {
     @Test
     @DisplayName("successful game joins")
     public void joinGameSuccesses() throws ChessException {
-        service.clear();
-        var fredAuth = service.registerUser(userFred).authToken();
-        var sueAuth = service.registerUser(userSue).authToken();
-        var gameID = service.createGame(fredAuth, goodGame1).gameID();
+        SERVICE.clear();
+        var fredAuth = SERVICE.registerUser(USER_FRED).authToken();
+        var sueAuth = SERVICE.registerUser(USER_SUE).authToken();
+        var gameID = SERVICE.createGame(fredAuth, GOOD_GAME_1).gameID();
 
         JoinRequest joinFredAsBlack = new JoinRequest("BLACK", gameID);
         JoinRequest joinSueAsWhite = new JoinRequest("WHITE", gameID);
 
-        Assertions.assertDoesNotThrow(() -> service.joinGame(fredAuth, joinFredAsBlack));
-        Assertions.assertDoesNotThrow(() -> service.joinGame(sueAuth, joinSueAsWhite));
+        Assertions.assertDoesNotThrow(() -> SERVICE.joinGame(fredAuth, joinFredAsBlack));
+        Assertions.assertDoesNotThrow(() -> SERVICE.joinGame(sueAuth, joinSueAsWhite));
 
         GameData expectedGame = new GameData(gameID, "Sue", "Fred", "myGame", new ChessGame());
 
         GameData actualGame = new GameData(0, null, null, null, null);
-        for (GameData game : service.listGames(fredAuth)) {
+        for (GameData game : SERVICE.listGames(fredAuth)) {
             actualGame = game;
         }
 
@@ -241,17 +241,17 @@ public class ServiceTests {
     @Test
     @DisplayName("color already taken")
     public void badJoin() throws ChessException {
-        service.clear();
-        var fredAuth = service.registerUser(userFred).authToken();
-        var sueAuth = service.registerUser(userSue).authToken();
-        var gameID = service.createGame(fredAuth, goodGame1).gameID();
+        SERVICE.clear();
+        var fredAuth = SERVICE.registerUser(USER_FRED).authToken();
+        var sueAuth = SERVICE.registerUser(USER_SUE).authToken();
+        var gameID = SERVICE.createGame(fredAuth, GOOD_GAME_1).gameID();
 
         JoinRequest joinFredAsBlack = new JoinRequest("BLACK", gameID);
         JoinRequest joinSueAsBlack = new JoinRequest("BLACK", gameID);
 
-        Assertions.assertDoesNotThrow(() -> service.joinGame(fredAuth, joinFredAsBlack));
+        Assertions.assertDoesNotThrow(() -> SERVICE.joinGame(fredAuth, joinFredAsBlack));
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
-                service.joinGame(sueAuth, joinSueAsBlack));
+                SERVICE.joinGame(sueAuth, joinSueAsBlack));
 
         Assertions.assertEquals(403, exception.getStatus());
         Assertions.assertEquals("already taken", exception.getMessage());

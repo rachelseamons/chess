@@ -64,7 +64,7 @@ public class ChessGame {
             return possible;
         }
 
-        ChessRules rules = new ChessRules(board,piece);
+        ChessRules rules = new ChessRules(board, piece);
         possible = rules.getPossibleMoves(startPosition);
 
         //make sure no moves enter check
@@ -97,7 +97,7 @@ public class ChessGame {
         //promote pawn
         if (piece.getPieceType() == ChessPiece.PieceType.PAWN) {
             if ((piece.getTeamColor() == TeamColor.BLACK && move.getEndPosition().getRow() == 1)
-                || (piece.getTeamColor() == TeamColor.WHITE && move.getEndPosition().getRow() == 8)) {
+                    || (piece.getTeamColor() == TeamColor.WHITE && move.getEndPosition().getRow() == 8)) {
                 piece = new ChessPiece(turn, move.getPromotionPiece());
             }
         }
@@ -191,15 +191,7 @@ public class ChessGame {
         }
 
         //get all valid moves for team
-        Set<ChessMove> possibleMoves = new HashSet<>();
-        for (int i = 1; i < 9; i++) {
-            for (int j = 1; j < 9; j++) {
-                ChessPosition test = new ChessPosition(i,j);
-                if (board.at(test) != null && board.at(test).getTeamColor() == teamColor) {
-                    possibleMoves.addAll(validMoves(test));
-                }
-            }
-        }
+        var possibleMoves = getAllValidMoves(teamColor);
 
         //if there are any valid moves, then the specified team is not in checkmate because a move can only be valid if
         //it doesn't end with the king in check
@@ -219,20 +211,26 @@ public class ChessGame {
             return false;
         }
 
+        var possibleMoves = getAllValidMoves(teamColor);
+
+        //if there are any valid moves, specified team is not in stalemate because a valid move cannot end with the
+        //king in check
+        return possibleMoves.isEmpty();
+    }
+
+    private Set<ChessMove> getAllValidMoves(TeamColor teamColor) {
         //get all valid moves for team
         Set<ChessMove> possibleMoves = new HashSet<>();
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                ChessPosition test = new ChessPosition(i,j);
+                ChessPosition test = new ChessPosition(i, j);
                 if (board.at(test) != null && board.at(test).getTeamColor() == teamColor) {
                     possibleMoves.addAll(validMoves(test));
                 }
             }
         }
 
-        //if there are any valid moves, specified team is not in stalemate because a valid move cannot end with the
-        //king in check
-        return possibleMoves.isEmpty();
+        return possibleMoves;
     }
 
     /**
@@ -256,7 +254,7 @@ public class ChessGame {
     @Override
     public boolean equals(Object object) {
         if (this == object) return true;
-        if (!(object instanceof  ChessGame chessGame)) return false;
+        if (!(object instanceof ChessGame chessGame)) return false;
         return turn == chessGame.turn && Objects.equals(board, chessGame.board);
     }
 

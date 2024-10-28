@@ -165,10 +165,10 @@ public class ChessRules {
     private Set<ChessMove> moveRook(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
 
-        possible.addAll(straightLine(start, direction.N));
-        possible.addAll(straightLine(start, direction.W));
-        possible.addAll(straightLine(start, direction.S));
-        possible.addAll(straightLine(start, direction.E));
+        possible.addAll(straightLine(start, Direction.N));
+        possible.addAll(straightLine(start, Direction.W));
+        possible.addAll(straightLine(start, Direction.S));
+        possible.addAll(straightLine(start, Direction.E));
 
         return possible;
     }
@@ -176,10 +176,10 @@ public class ChessRules {
     private Set<ChessMove> moveBishop(ChessPosition start) {
         Set<ChessMove> possible = new HashSet<>();
 
-        possible.addAll(straightLine(start, direction.NW));
-        possible.addAll(straightLine(start, direction.SW));
-        possible.addAll(straightLine(start, direction.SE));
-        possible.addAll(straightLine(start, direction.NE));
+        possible.addAll(straightLine(start, Direction.NW));
+        possible.addAll(straightLine(start, Direction.SW));
+        possible.addAll(straightLine(start, Direction.SE));
+        possible.addAll(straightLine(start, Direction.NE));
 
         return possible;
     }
@@ -193,7 +193,7 @@ public class ChessRules {
         return possible;
     }
 
-    private Set<ChessMove> straightLine(ChessPosition start, direction direction) {
+    private Set<ChessMove> straightLine(ChessPosition start, Direction direction) {
         Set<ChessMove> possible = new HashSet<>();
         ChessPosition test = start;
 
@@ -218,22 +218,22 @@ public class ChessRules {
         return possible;
     }
 
-    private ChessPosition moveDirection(ChessPosition start, direction direction) {
-        if (direction == ChessRules.direction.N) {
+    private ChessPosition moveDirection(ChessPosition start, Direction direction) {
+        if (direction == Direction.N) {
             return start.incrementRow();
-        } else if (direction == ChessRules.direction.NE) {
+        } else if (direction == Direction.NE) {
             return start.incrementRow().incrementCol();
-        } else if (direction == ChessRules.direction.E) {
+        } else if (direction == Direction.E) {
             return start.incrementCol();
-        } else if (direction == ChessRules.direction.SE) {
+        } else if (direction == Direction.SE) {
             return start.decrementRow().incrementCol();
-        } else if (direction == ChessRules.direction.S) {
+        } else if (direction == Direction.S) {
             return start.decrementRow();
-        } else if (direction == ChessRules.direction.SW) {
+        } else if (direction == Direction.SW) {
             return start.decrementRow().decrementCol();
-        } else if (direction == ChessRules.direction.W) {
+        } else if (direction == Direction.W) {
             return start.decrementCol();
-        } else if (direction == ChessRules.direction.NW) {
+        } else if (direction == Direction.NW) {
             return start.incrementRow().decrementCol();
         }
 
@@ -245,7 +245,7 @@ public class ChessRules {
         ChessPosition kingPosition = null;
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                ChessPosition test = new ChessPosition(i,j);
+                ChessPosition test = new ChessPosition(i, j);
                 if (board.at(test) != null && board.at(test).getTeamColor() == teamColor
                         && board.at(test).getPieceType() == ChessPiece.PieceType.KING) {
                     kingPosition = test;
@@ -260,7 +260,7 @@ public class ChessRules {
         //test if any piece on opposing team can move to king
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
-                ChessPosition test = new ChessPosition(i,j);
+                ChessPosition test = new ChessPosition(i, j);
                 if (board.at(test) != null && board.at(test).getTeamColor() != teamColor) {
                     ChessMove testMove = new ChessMove(test, kingPosition);
                     piece = board.at(test);
@@ -276,7 +276,7 @@ public class ChessRules {
         return false;
     }
 
-    private enum direction {
+    private enum Direction {
         N, NE, E, SE, S, SW, W, NW;
     }
 }
