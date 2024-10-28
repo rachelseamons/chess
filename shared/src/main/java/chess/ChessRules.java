@@ -107,20 +107,18 @@ public class ChessRules {
             endPosition = startPosition.decrementRow();
         }
 
-        //check right
-        ChessPosition test = endPosition.incrementCol();
-        if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
-            if ((test.getRow() == 1 || test.getRow() == 8)
-                    && board.at(test).getPieceType() != ChessPiece.PieceType.KING) {
-                //tests for king because if king is captured, game ends and pawn won't be promoted
-                possible.addAll((promotePawn(startPosition, test)));
-            } else {
-                possible.add(new ChessMove(startPosition, test));
-            }
-        }
+        //check right and left
+        ChessPosition right = endPosition.incrementCol();
+        ChessPosition left = endPosition.decrementCol();
+        possible.addAll(testPawnCapturable(startPosition, right));
+        possible.addAll(testPawnCapturable(startPosition, left));
 
-        //check left
-        test = endPosition.decrementCol();
+        return possible;
+    }
+
+    private Set<ChessMove> testPawnCapturable(ChessPosition startPosition, ChessPosition test) {
+        Set<ChessMove> possible = new HashSet<>();
+
         if (test.onBoard() && board.at(test) != null && board.at(test).getTeamColor() != piece.getTeamColor()) {
             if ((test.getRow() == 1 || test.getRow() == 8)
                     && board.at(test).getPieceType() != ChessPiece.PieceType.KING) {
