@@ -253,8 +253,12 @@ public class ChessGame {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof ChessGame chessGame)) return false;
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof ChessGame chessGame)) {
+            return false;
+        }
         return turn == chessGame.turn && Objects.equals(board, chessGame.board);
     }
 

@@ -73,14 +73,18 @@ public class ChessPosition {
 
     @Override
     public boolean equals(Object object) {
-        if (this == object) return true;
-        if (object == null || getClass() != object.getClass()) return false;
+        if (this == object) {
+            return true;
+        }
+        if (object == null || getClass() != object.getClass()) {
+            return false;
+        }
         ChessPosition that = (ChessPosition) object;
         return row == that.row && col == that.col;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(row,col);
+        return Objects.hash(row, col);
     }
 }

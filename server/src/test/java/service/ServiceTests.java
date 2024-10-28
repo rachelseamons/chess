@@ -55,8 +55,7 @@ public class ServiceTests {
     @Test
     @DisplayName("Clear database")
     public void clearDatabase() throws ChessException {
-        //TODO:: add stuff first so you can prove it's being cleared, update as you implement functions like
-        // getUserByAuth
+        //this test could be enhanced with more added to the database using various functions
         SERVICE.clear();
 
         Assertions.assertDoesNotThrow(() -> SERVICE.registerUser(USER_FRED));
