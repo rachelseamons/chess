@@ -256,21 +256,27 @@ public class ChessRules {
         }
 
         //test if any piece on opposing team can move to king
+        Set<ChessMove> possiblePieceMoves = new HashSet<>();
         for (int i = 1; i < 9; i++) {
             for (int j = 1; j < 9; j++) {
                 ChessPosition test = new ChessPosition(i, j);
                 if (board.at(test) != null && board.at(test).getTeamColor() != teamColor) {
                     ChessMove testMove = new ChessMove(test, kingPosition);
-                    piece = board.at(test);
-                    Set<ChessMove> possiblePieceMoves = getPossibleMoves(test);
-                    for (ChessMove move : possiblePieceMoves) {
-                        if (move.equals(testMove)) {
-                            return true;
-                        }
-                    }
+                    possiblePieceMoves.add(testMove);
                 }
             }
         }
+
+        for (ChessMove testMove : possiblePieceMoves) {
+            piece = board.at(testMove.getStartPosition());
+            Set<ChessMove> validMoves = getPossibleMoves(testMove.getStartPosition());
+            for (ChessMove move : validMoves) {
+                if (move.equals(testMove)) {
+                    return true;
+                }
+            }
+        }
+        
         return false;
     }
 
