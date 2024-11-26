@@ -11,7 +11,7 @@ import java.util.Set;
 public interface DataAccess {
     UserData getUserByUsername(String username);
 
-    UserData createUser(UserData user);
+    UserData createUser(UserData user) throws ChessException;
 
     AuthData createAuth(String username);
 

@@ -3,11 +3,14 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import server.JoinRequest;
 import service.ChessException;
 
 import java.sql.SQLException;
 import java.util.Set;
+
+import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
 public class SQLDataAccess implements DataAccess {
 
@@ -21,8 +24,24 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public UserData createUser(UserData user) {
-        return null;
+    public UserData createUser(UserData user) throws ChessException {
+        try {
+            var username = user.username();
+            var email = user.email();
+            var password = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+            var statement = "INSERT INTO users (username, email, password) VALUES(?, ?, ?)";
+            try (var conn = DatabaseManager.getConnection()) {
+                try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, username);
+                    ps.setString(2, email);
+                    ps.setString(3, password);
+                    ps.executeUpdate();
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException(ex.getMessage(), 45);
+        }
+        return new UserData(user.username(), null, user.email());
     }
 
     @Override
@@ -68,43 +87,41 @@ public class SQLDataAccess implements DataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS users (
-              'id' in NOT NULL AUTO_INCREMENT,
-              'username' varchar(256) NOT NULL,
-              'password' varchar(256) NOT NULL,
-              'email' varchar(256) NOT NULL,
-              PRIMARY KEY ('id'),
-              INDEX(username)
+              username varchar(256) NOT NULL,
+              password varchar(256) NOT NULL,
+              email varchar(256) NOT NULL,
+              PRIMARY KEY (username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """,
+            """
 
-            """
-            CREATE TABLE IF NOT EXISTS auth (
-              'authToken' in NOT NULL AUTO_INCREMENT,
-              'username' varchar(256) NOT NULL,
-              PRIMARY KEY ('authToken')
-              INDEX(username)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """,
-
-            """
-            CREATE TABLE IF NOT EXISTS games (
-              'id' int NOT NULL AUTO_INCREMENT,
-              'gameName' varchar(256) NOT NULL,
-              'whiteUsername' varchar(256),
-              'blackUsername' varchar(256),
-              'game' ChessGame NOT NULL, //does this need to be json?
-              PRIMARY KEY ('id'),
-              INDEX(gameName)
-            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
+//            """
+//            CREATE TABLE IF NOT EXISTS auth (
+//              authToken in NOT NULL AUTO_INCREMENT,
+//              'username' varchar(256) NOT NULL,
+//              PRIMARY KEY ('authToken')
+//              INDEX(username)
+//            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+//            """,
+//
+//            """
+//            CREATE TABLE IF NOT EXISTS games (
+//              'id' int NOT NULL AUTO_INCREMENT,
+//              'gameName' varchar(256) NOT NULL,
+//              'whiteUsername' varchar(256),
+//              'blackUsername' varchar(256),
+//              'game' ChessGame NOT NULL, //does this need to be json?
+//              PRIMARY KEY ('id'),
+//              INDEX(gameName)
+//            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+//            """
     };
 
     private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
-                try (var preparedStatment = conn.prepareStatement(statement)) {
-                    preparedStatment.executeUpdate();
+                try (var preparedStatement = conn.prepareStatement(statement)) {
+                    preparedStatement.executeUpdate();
                 }
             }
         } catch (SQLException ex) {

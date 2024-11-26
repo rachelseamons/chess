@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import dataaccess.SQLDataAccess;
 import model.GameData;
 import model.UserData;
 import service.ChessException;
@@ -15,28 +16,36 @@ import java.util.Map;
 
 public class Server {
     private final Gson serializer = new Gson();
-    private final Service service = new Service(new MemoryDataAccess());
+    //private final Service service = new Service(new MemoryDataAccess());
+    private Service service;
+
 
     public int run(int desiredPort) {
-        Spark.port(desiredPort);
+        try {
+            service = new Service(new SQLDataAccess());
+            Spark.port(desiredPort);
 
-        Spark.staticFiles.location("web");
+            Spark.staticFiles.location("web");
 
-        // Register your endpoints and handle exceptions here.
-        Spark.post("/user", this::registerUser);
-        Spark.post("/session", this::loginUser);
-        Spark.delete("/session", this::logoutUser);
-        Spark.get("/game", this::getGames);
-        Spark.post("/game", this::createGame);
-        Spark.put("/game", this::joinGame);
-        Spark.delete("/db", this::clear);
-        //This line initializes the server and can be removed once you have a functioning endpoint 
-        Spark.init();
+            // Register your endpoints and handle exceptions here.
+            Spark.post("/user", this::registerUser);
+            Spark.post("/session", this::loginUser);
+            Spark.delete("/session", this::logoutUser);
+            Spark.get("/game", this::getGames);
+            Spark.post("/game", this::createGame);
+            Spark.put("/game", this::joinGame);
+            Spark.delete("/db", this::clear);
+            //This line initializes the server and can be removed once you have a functioning endpoint
+            Spark.init();
 
-        Spark.exception(Exception.class, this::exceptionHandler);
+            Spark.exception(Exception.class, this::exceptionHandler);
 
-        Spark.awaitInitialization();
-        return Spark.port();
+            Spark.awaitInitialization();
+            return Spark.port();
+        } catch (DataAccessException ex) {
+            System.out.println("Error: " + ex);
+            return -1;
+        }
     }
 
 
