@@ -57,7 +57,11 @@ public class SQLDataAccess implements DataAccess {
                 }
             }
         } catch (Exception ex) {
-            throw new ChessException(ex.getMessage(), 45);
+            if (ex.getMessage().startsWith("Duplicate entry")) {
+                throw new ChessException("already taken", 403);
+            } else {
+                throw new ChessException("unknown dataAccess error", 45);
+            }
         }
         return new UserData(user.username(), null, user.email());
     }
