@@ -99,7 +99,7 @@ public class Server {
         return new Gson().toJson(userAuth);
     }
 
-    private Object clear(Request request, Response response) {
+    private Object clear(Request request, Response response) throws ChessException {
         service.clear();
         return serializer.toJson(new HashMap<>());
     }

@@ -3,11 +3,15 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
+import org.eclipse.jetty.server.Authentication;
 import org.mindrot.jbcrypt.BCrypt;
 import server.JoinRequest;
 import service.ChessException;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
@@ -19,7 +23,21 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public UserData getUserByUsername(String username) {
+    public UserData getUserByUsername(String username) throws ChessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT username FROM users WHERE username=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var retrievedUser = rs.getString("username");
+                        return new UserData(retrievedUser, null, null);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException(ex.getMessage(), 45);
+        }
         return null;
     }
 
@@ -50,8 +68,19 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public void clear() {
-
+    public void clear() throws ChessException {
+        List<String> statements = new ArrayList<>();
+        statements.add("TRUNCATE users");
+        //TODO:: clear the other db tables once they're created
+        try (var conn = DatabaseManager.getConnection()) {
+            for (var statement : statements) {
+                try (var ps = conn.prepareStatement(statement)) {
+                    ps.executeUpdate();
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException("Error: " + ex.getMessage(), 500);
+        }
     }
 
     @Override
@@ -96,7 +125,7 @@ public class SQLDataAccess implements DataAccess {
 
 //            """
 //            CREATE TABLE IF NOT EXISTS auth (
-//              authToken in NOT NULL AUTO_INCREMENT,
+//              authToken in NOT NULL AUTO_INCREMENT, use UUID not auto-generate
 //              'username' varchar(256) NOT NULL,
 //              PRIMARY KEY ('authToken')
 //              INDEX(username)

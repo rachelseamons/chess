@@ -9,13 +9,13 @@ import service.ChessException;
 import java.util.Set;
 
 public interface DataAccess {
-    UserData getUserByUsername(String username);
+    UserData getUserByUsername(String username) throws ChessException;
 
     UserData createUser(UserData user) throws ChessException;
 
     AuthData createAuth(String username);
 
-    void clear();
+    void clear() throws ChessException;
 
     boolean verifyUser(UserData user);
 

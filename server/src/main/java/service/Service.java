@@ -23,7 +23,7 @@ public class Service {
         return dataAccess.createAuth(registeredUser.username());
     }
 
-    public void clear() {
+    public void clear() throws ChessException {
         dataAccess.clear();
     }
 
