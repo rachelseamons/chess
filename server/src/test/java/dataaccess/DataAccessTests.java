@@ -1,8 +1,10 @@
 package dataaccess;
 
+import model.AuthData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import service.ChessException;
@@ -15,6 +17,11 @@ public class DataAccessTests {
     public DataAccessTests() throws DataAccessException {
     }
 
+    @BeforeEach
+    public void setUp() throws Exception {
+        dataAccess.clear();
+    }
+
     @Test
     @DisplayName("fail to get user with empty set")
     public void emptySet() throws ChessException {
@@ -25,7 +32,6 @@ public class DataAccessTests {
     @Test
     @DisplayName("get user by username success")
     public void getExistingUser() throws ChessException {
-        dataAccess.clear();
         var username = UUID.randomUUID().toString();
         UserData newUser = new UserData(username, "password", "@me");
         dataAccess.createUser(newUser);
@@ -38,7 +44,6 @@ public class DataAccessTests {
     @Test
     @DisplayName("add user success")
     public void createUser() throws Exception {
-        dataAccess.clear();
         var username = UUID.randomUUID().toString();
         UserData newUser = new UserData(username, "password", "@me");
         var createdUser = dataAccess.createUser(newUser);
@@ -53,7 +58,6 @@ public class DataAccessTests {
     @Test
     @DisplayName("fail to add existing user")
     public void createUserFail() throws Exception {
-        dataAccess.clear();
         var username = UUID.randomUUID().toString();
         UserData newUser = new UserData(username, "password", "@me");
         dataAccess.createUser(newUser);
@@ -66,6 +70,17 @@ public class DataAccessTests {
 
         Assertions.assertEquals(expectedMessage, actualMessage);
         Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("create auth success")
+    public void createAuth() throws Exception {
+        dataAccess.clear();
+        var username = UUID.randomUUID().toString();
+        AuthData newAuth = dataAccess.createAuth(username);
+
+        Assertions.assertNotNull(newAuth);
+        Assertions.assertEquals(username, newAuth.username());
     }
 
 }

@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -67,14 +68,26 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public AuthData createAuth(String username) {
-        return null;
+    public AuthData createAuth(String username) throws ChessException {
+        var authToken = UUID.randomUUID().toString();
+        var statement = "INSERT INTO auth (authToken, username) VALUES(?, ?)";
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                ps.setString(2, username);
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new ChessException("unknown dataAccess error", 45);
+        }
+        return new AuthData(authToken, username);
     }
 
     @Override
     public void clear() throws ChessException {
         List<String> statements = new ArrayList<>();
         statements.add("TRUNCATE users");
+        statements.add("TRUNCATE auth");
         //TODO:: clear the other db tables once they're created
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : statements) {
@@ -125,16 +138,16 @@ public class SQLDataAccess implements DataAccess {
               email varchar(256) NOT NULL,
               PRIMARY KEY (username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-            """
+            """,
 
-//            """
-//            CREATE TABLE IF NOT EXISTS auth (
-//              authToken in NOT NULL AUTO_INCREMENT, use UUID not auto-generate
-//              'username' varchar(256) NOT NULL,
-//              PRIMARY KEY ('authToken')
-//              INDEX(username)
-//            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-//            """,
+            """
+            CREATE TABLE IF NOT EXISTS auth (
+              authToken varchar(256) NOT NULL,
+              username varchar(256) NOT NULL,
+              PRIMARY KEY (authToken),
+              INDEX(username)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
 //
 //            """
 //            CREATE TABLE IF NOT EXISTS games (

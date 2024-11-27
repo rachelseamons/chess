@@ -13,7 +13,7 @@ public interface DataAccess {
 
     UserData createUser(UserData user) throws ChessException;
 
-    AuthData createAuth(String username);
+    AuthData createAuth(String username) throws ChessException;
 
     void clear() throws ChessException;
 
