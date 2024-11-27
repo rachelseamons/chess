@@ -104,8 +104,24 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public boolean verifyUser(UserData user) {
-        return false;
+    public boolean verifyUser(UserData user) throws ChessException {
+        var statement = "SELECT password FROM users WHERE username=?";
+        var username = user.username();
+        String hashedPassword = null;
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        hashedPassword = rs.getString("password");
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException("unauthorized", 401);
+        }
+
+        return BCrypt.checkpw(user.password(), hashedPassword);
     }
 
     @Override

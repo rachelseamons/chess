@@ -7,6 +7,7 @@ import dataaccess.MemoryDataAccess;
 import dataaccess.SQLDataAccess;
 import model.GameData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 import service.ChessException;
 import service.Service;
 import spark.*;
@@ -94,7 +95,8 @@ public class Server {
         if (user.username() == null || user.password() == null) {
             throw new ChessException("bad request", 400);
         }
-
+        var hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        user = new UserData(user.username(), hashedPassword, user.email());
         var userAuth = service.loginUser(user);
         return new Gson().toJson(userAuth);
     }
@@ -111,6 +113,8 @@ public class Server {
             throw new ChessException("bad request", 400);
         }
 
+        var hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        user = new UserData(user.username(), hashedPassword, user.email());
         var userAuth = service.registerUser(user);
 
         return serializer.toJson(userAuth);

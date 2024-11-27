@@ -17,7 +17,7 @@ public interface DataAccess {
 
     void clear() throws ChessException;
 
-    boolean verifyUser(UserData user);
+    boolean verifyUser(UserData user) throws ChessException;
 
     AuthData getUserByAuthtoken(String authToken);
 

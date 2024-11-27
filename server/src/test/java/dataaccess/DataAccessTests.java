@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.ChessException;
 
 import java.util.UUID;
@@ -94,5 +95,16 @@ public class DataAccessTests {
 
         Assertions.assertEquals(expectedMessage, actualMessage);
         Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("verify user successfully")
+    public void verifyUserSuccess() throws Exception {
+        var username = UUID.randomUUID().toString();
+        var hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
+        UserData newUser = new UserData(username, hashedPassword, "@me");
+        dataAccess.createUser(newUser);
+
+        Assertions.assertTrue(dataAccess.verifyUser(newUser));
     }
 }
