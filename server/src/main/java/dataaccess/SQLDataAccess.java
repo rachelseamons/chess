@@ -69,6 +69,9 @@ public class SQLDataAccess implements DataAccess {
 
     @Override
     public AuthData createAuth(String username) throws ChessException {
+        if (username == null) {
+            throw new ChessException("bad request", 400);
+        }
         var authToken = UUID.randomUUID().toString();
         var statement = "INSERT INTO auth (authToken, username) VALUES(?, ?)";
         try (var conn = DatabaseManager.getConnection()) {

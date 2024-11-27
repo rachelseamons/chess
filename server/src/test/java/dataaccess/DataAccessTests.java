@@ -75,7 +75,6 @@ public class DataAccessTests {
     @Test
     @DisplayName("create auth success")
     public void createAuth() throws Exception {
-        dataAccess.clear();
         var username = UUID.randomUUID().toString();
         AuthData newAuth = dataAccess.createAuth(username);
 
@@ -83,4 +82,17 @@ public class DataAccessTests {
         Assertions.assertEquals(username, newAuth.username());
     }
 
+    @Test
+    @DisplayName("fail to create auth with no username")
+    public void failCreateAuth() throws Exception {
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.createAuth(null));
+        String expectedMessage = "bad request";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 400;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
 }
