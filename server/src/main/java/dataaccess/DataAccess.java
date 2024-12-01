@@ -19,9 +19,9 @@ public interface DataAccess {
 
     boolean verifyUser(UserData user) throws ChessException;
 
-    AuthData getUserByAuthtoken(String authToken);
+    AuthData getUserByAuthtoken(String authToken) throws ChessException;
 
-    void logoutUser(String authToken);
+    void logoutUser(String authToken) throws ChessException;
 
     GameData createGame(GameData game);
 

@@ -120,6 +120,69 @@ public class DataAccessTests {
         Assertions.assertEquals(expectedStatus, actualStatus);
     }
 
+    @Test
+    @DisplayName("get user by authtoken success")
+    public void getByAuthSuccess() throws Exception {
+        var newUser = createTestUser();
+        AuthData newAuth = dataAccess.createAuth(newUser.username());
+        var authToken = newAuth.authToken();
+
+        var retrievedAuth = dataAccess.getUserByAuthtoken(authToken);
+
+        Assertions.assertEquals(authToken, retrievedAuth.authToken());
+        Assertions.assertEquals(newAuth.username(), retrievedAuth.username());
+    }
+
+    @Test
+    @DisplayName("fail get user by authtoken")
+    public void getByAuthFail() throws Exception {
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.getUserByAuthtoken(null));
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("logout success")
+    public void logoutSuccess() throws Exception {
+        var newUser = createTestUser();
+        var newAuth = dataAccess.createAuth(newUser.username());
+
+        Assertions.assertDoesNotThrow(() -> dataAccess.logoutUser(newAuth.authToken()));
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.getUserByAuthtoken(newAuth.authToken()));
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("fail to logout user twice")
+    public void logoutFail() throws Exception {
+        var newUser = createTestUser();
+        var newAuth = dataAccess.createAuth(newUser.username());
+
+        Assertions.assertDoesNotThrow(() -> dataAccess.logoutUser(newAuth.authToken()));
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.logoutUser(newAuth.authToken()));
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
 
     private UserData createTestUser() {
         var username = UUID.randomUUID().toString();
