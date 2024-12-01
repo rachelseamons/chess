@@ -124,13 +124,29 @@ public class SQLDataAccess implements DataAccess {
         if (hashedPassword == null) {
             throw new ChessException("unauthorized", 401);
         }
-        
+
         return BCrypt.checkpw(user.password(), hashedPassword);
     }
 
     @Override
-    public AuthData getUserByAuthtoken(String authToken) {
-        return null;
+    public AuthData getUserByAuthtoken(String authToken) throws ChessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT authToken, username FROM auth WHERE authToken=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, authToken);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        var retrievedAuth = rs.getString("authToken");
+                        var retrievedUsername = rs.getString("username");
+                        return new AuthData(retrievedAuth, retrievedUsername);
+                    } else {
+                        throw new ChessException("unauthorized", 401);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException("unauthorized", 401);
+        }
     }
 
     @Override
