@@ -11,11 +11,9 @@ import server.JoinRequest;
 import service.ChessException;
 
 import javax.xml.crypto.Data;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static java.sql.Statement.RETURN_GENERATED_KEYS;
 
@@ -196,8 +194,32 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public Set<GameData> listGames() {
-        return null;
+    public Set<GameData> listGames() throws ChessException {
+        Set<GameData> games = new HashSet<>();
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM games";
+            try (var ps = conn.prepareStatement(statement)) {
+                try (var rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        games.add(readGame(rs));
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException(ex.getMessage(), 500);
+        }
+
+        return games;
+    }
+
+    private GameData readGame(ResultSet rs) throws SQLException {
+        var gameID = rs.getInt("id");
+        var white = rs.getString("whiteUsername");
+        var black = rs.getString("blackUsername");
+        var gameName = rs.getString("gameName");
+        var json = rs.getString("game");
+        var game = new Gson().fromJson(json, ChessGame.class);
+        return new GameData(gameID, white, black, gameName, game);
     }
 
     @Override

@@ -11,6 +11,9 @@ import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
 import service.ChessException;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 public class DataAccessTests {
@@ -212,6 +215,38 @@ public class DataAccessTests {
         int actualStatus = exception.getStatus();
 
         Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("list games success")
+    public void listGamesSuccess() throws Exception {
+        Set<GameData> games = new HashSet<>();
+        for (int i = 0; i < 10; i++) {
+            var game = createTestGame();
+            games.add(game);
+            dataAccess.createGame(game);
+        }
+
+        var retrievedGames = dataAccess.listGames();
+
+        Set<String> retrievedNames = new HashSet<>();
+        Set<String> expectedNames = new HashSet<>();
+        for (GameData game : retrievedGames) {
+            retrievedNames.add(game.gameName());
+        }
+        for (GameData game : games) {
+            expectedNames.add(game.gameName());
+        }
+
+        Assertions.assertEquals(expectedNames, retrievedNames);
+    }
+
+    @Test
+    @DisplayName("list no games")
+    public void listNoGames() throws Exception {
+        dataAccess.clear();
+        var games = dataAccess.listGames();
+        Assertions.assertEquals(new HashSet<>(), games);
     }
 
 
