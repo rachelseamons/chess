@@ -1,5 +1,7 @@
 package dataaccess;
 
+import chess.ChessGame;
+import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -91,6 +93,7 @@ public class SQLDataAccess implements DataAccess {
         List<String> statements = new ArrayList<>();
         statements.add("TRUNCATE users");
         statements.add("TRUNCATE auth");
+        statements.add("TRUNCATE games");
         //TODO:: clear the other db tables once they're created
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : statements) {
@@ -167,8 +170,29 @@ public class SQLDataAccess implements DataAccess {
     }
 
     @Override
-    public GameData createGame(GameData game) {
-        return null;
+    public GameData createGame(GameData game) throws ChessException {
+        var gameName = game.gameName();
+        var newGame = new ChessGame();
+        var json = new Gson().toJson(newGame);
+        int gameID = 0;
+        var statement = "INSERT INTO games (gameName, game) VALUES(?, ?)";
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
+                ps.setString(1, gameName);
+                ps.setString(2, json);
+
+                ps.executeUpdate();
+                var rs = ps.getGeneratedKeys();
+                if (rs.next()) {
+                    gameID = rs.getInt(1);
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException(ex.getMessage(), 500);
+        }
+
+        return new GameData(gameID, null, null, gameName, newGame);
     }
 
     @Override
@@ -198,19 +222,19 @@ public class SQLDataAccess implements DataAccess {
               PRIMARY KEY (authToken),
               INDEX(username)
             ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """,
+
             """
-//
-//            """
-//            CREATE TABLE IF NOT EXISTS games (
-//              'id' int NOT NULL AUTO_INCREMENT,
-//              'gameName' varchar(256) NOT NULL,
-//              'whiteUsername' varchar(256),
-//              'blackUsername' varchar(256),
-//              'game' ChessGame NOT NULL, //does this need to be json?
-//              PRIMARY KEY ('id'),
-//              INDEX(gameName)
-//            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-//            """
+            CREATE TABLE IF NOT EXISTS games (
+              id int NOT NULL AUTO_INCREMENT,
+              gameName varchar(256) NOT NULL,
+              whiteUsername varchar(256),
+              blackUsername varchar(256),
+              game TEXT NOT NULL,
+              PRIMARY KEY (id),
+              INDEX(gameName)
+            ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
+            """
     };
 
     private void configureDatabase() throws DataAccessException {

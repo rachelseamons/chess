@@ -23,9 +23,9 @@ public interface DataAccess {
 
     void logoutUser(String authToken) throws ChessException;
 
-    GameData createGame(GameData game);
+    GameData createGame(GameData game) throws ChessException;
 
-    Set<GameData> listGames();
+    Set<GameData> listGames() throws ChessException;
 
     void joinGame(JoinRequest request, String username) throws ChessException;
 }

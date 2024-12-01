@@ -1,6 +1,7 @@
 package dataaccess;
 
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
@@ -183,10 +184,45 @@ public class DataAccessTests {
         Assertions.assertEquals(expectedStatus, actualStatus);
     }
 
+    @Test
+    @DisplayName("create game success")
+    public void createGameSuccess() throws Exception {
+        dataAccess.clear();
+        var game = createTestGame();
+        var createdGame = dataAccess.createGame(game);
+
+        Assertions.assertEquals(game.gameName(), createdGame.gameName());
+        Assertions.assertEquals(1, createdGame.gameID());
+
+        game = createTestGame();
+        createdGame = dataAccess.createGame(game);
+
+        Assertions.assertEquals(game.gameName(), createdGame.gameName());
+        Assertions.assertEquals(2, createdGame.gameID());
+    }
+
+    @Test
+    @DisplayName("fail to create game with no gameName")
+    public void createGameFail() throws Exception {
+        var game = new GameData(0, null, null, null, null);
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.createGame(game));
+
+        int expectedStatus = 500;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
 
     private UserData createTestUser() {
         var username = UUID.randomUUID().toString();
         var hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
         return new UserData(username, hashedPassword, "@me");
+    }
+
+    private GameData createTestGame() {
+        var gameName = UUID.randomUUID().toString();
+        return new GameData(0, null, null, gameName, null);
     }
 }
