@@ -121,6 +121,10 @@ public class SQLDataAccess implements DataAccess {
             throw new ChessException("unauthorized", 401);
         }
 
+        if (hashedPassword == null) {
+            throw new ChessException("unauthorized", 401);
+        }
+        
         return BCrypt.checkpw(user.password(), hashedPassword);
     }
 

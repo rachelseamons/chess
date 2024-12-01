@@ -59,8 +59,7 @@ public class DataAccessTests {
     @Test
     @DisplayName("fail to add existing user")
     public void createUserFail() throws Exception {
-        var username = UUID.randomUUID().toString();
-        UserData newUser = new UserData(username, "password", "@me");
+        var newUser = createTestUser();
         dataAccess.createUser(newUser);
 
         ChessException exception = Assertions.assertThrows(ChessException.class, () -> dataAccess.createUser(newUser));
@@ -100,11 +99,31 @@ public class DataAccessTests {
     @Test
     @DisplayName("verify user successfully")
     public void verifyUserSuccess() throws Exception {
-        var username = UUID.randomUUID().toString();
-        var hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
-        UserData newUser = new UserData(username, hashedPassword, "@me");
+        var newUser = createTestUser();
         dataAccess.createUser(newUser);
 
         Assertions.assertTrue(dataAccess.verifyUser(newUser));
+    }
+
+    @Test
+    @DisplayName("fail to verify non-existent user")
+    public void verifyNonexistentUser() throws Exception {
+        var newUser = createTestUser();
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.verifyUser(newUser));
+        String expectedMessage = "unauthorized";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+
+    private UserData createTestUser() {
+        var username = UUID.randomUUID().toString();
+        var hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
+        return new UserData(username, hashedPassword, "@me");
     }
 }
