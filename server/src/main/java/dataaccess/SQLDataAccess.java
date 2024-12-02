@@ -5,12 +5,10 @@ import com.google.gson.Gson;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.mindrot.jbcrypt.BCrypt;
 import server.JoinRequest;
 import service.ChessException;
 
-import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
@@ -47,7 +45,7 @@ public class SQLDataAccess implements DataAccess {
         try {
             var username = user.username();
             var email = user.email();
-            var password = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+            var password = user.password();
             var statement = "INSERT INTO users (username, email, password) VALUES(?, ?, ?)";
             try (var conn = DatabaseManager.getConnection()) {
                 try (var ps = conn.prepareStatement(statement, RETURN_GENERATED_KEYS)) {
@@ -92,7 +90,6 @@ public class SQLDataAccess implements DataAccess {
         statements.add("TRUNCATE users");
         statements.add("TRUNCATE auth");
         statements.add("TRUNCATE games");
-        //TODO:: clear the other db tables once they're created
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : statements) {
                 try (var ps = conn.prepareStatement(statement)) {

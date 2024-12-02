@@ -3,7 +3,6 @@ package dataaccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -12,7 +11,6 @@ import org.mindrot.jbcrypt.BCrypt;
 import server.JoinRequest;
 import service.ChessException;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -89,7 +87,7 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("fail to create auth with no username")
-    public void failCreateAuth() throws Exception {
+    public void failCreateAuth() {
         ChessException exception = Assertions.assertThrows(ChessException.class,
                 () -> dataAccess.createAuth(null));
         String expectedMessage = "bad request";
@@ -105,14 +103,16 @@ public class DataAccessTests {
     @DisplayName("verify user successfully")
     public void verifyUserSuccess() throws Exception {
         var newUser = createTestUser();
-        dataAccess.createUser(newUser);
+        var hashedPassword = BCrypt.hashpw(newUser.password(), BCrypt.gensalt());
+        var encryptedUser = new UserData(newUser.username(), hashedPassword, newUser.email());
+        dataAccess.createUser(encryptedUser);
 
         Assertions.assertTrue(dataAccess.verifyUser(newUser));
     }
 
     @Test
     @DisplayName("fail to verify non-existent user")
-    public void verifyNonexistentUser() throws Exception {
+    public void verifyNonexistentUser() {
         var newUser = createTestUser();
         ChessException exception = Assertions.assertThrows(ChessException.class,
                 () -> dataAccess.verifyUser(newUser));
@@ -140,7 +140,7 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("fail get user by authtoken")
-    public void getByAuthFail() throws Exception {
+    public void getByAuthFail() {
         ChessException exception = Assertions.assertThrows(ChessException.class,
                 () -> dataAccess.getUserByAuthtoken(null));
         String expectedMessage = "unauthorized";
@@ -207,7 +207,7 @@ public class DataAccessTests {
 
     @Test
     @DisplayName("fail to create game with no gameName")
-    public void createGameFail() throws Exception {
+    public void createGameFail() {
         var game = new GameData(0, null, null, null, null);
         ChessException exception = Assertions.assertThrows(ChessException.class,
                 () -> dataAccess.createGame(game));
@@ -312,7 +312,7 @@ public class DataAccessTests {
 
     private UserData createTestUser() {
         var username = UUID.randomUUID().toString();
-        var hashedPassword = BCrypt.hashpw("password", BCrypt.gensalt());
+        var hashedPassword = UUID.randomUUID().toString();
         return new UserData(username, hashedPassword, "@me");
     }
 

@@ -1,7 +1,6 @@
 package server;
 
 import com.google.gson.Gson;
-import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import dataaccess.SQLDataAccess;
@@ -95,8 +94,7 @@ public class Server {
         if (user.username() == null || user.password() == null) {
             throw new ChessException("bad request", 400);
         }
-        var hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-        user = new UserData(user.username(), hashedPassword, user.email());
+        user = new UserData(user.username(), user.password(), user.email());
         var userAuth = service.loginUser(user);
         return new Gson().toJson(userAuth);
     }

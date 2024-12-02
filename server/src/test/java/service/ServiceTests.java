@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import server.JoinRequest;
 
 import java.util.HashSet;
@@ -79,7 +80,8 @@ public class ServiceTests {
     @DisplayName("Successful login")
     public void successfulLogin() throws ChessException {
         service.clear();
-        service.registerUser(USER_FRED);
+        var hashedPassword = BCrypt.hashpw(USER_FRED.password(), BCrypt.gensalt());
+        service.registerUser(new UserData(USER_FRED.username(), hashedPassword, USER_FRED.email()));
 
         var userAuth = service.loginUser(LOGIN_FRED);
         Assertions.assertEquals(USER_FRED.username(), userAuth.username());
@@ -106,7 +108,8 @@ public class ServiceTests {
     @DisplayName("Login wrong password")
     public void loginWrongPassword() throws ChessException {
         service.clear();
-        service.registerUser(USER_SUE);
+        var hashedPassword = BCrypt.hashpw(USER_SUE.password(), BCrypt.gensalt());
+        service.registerUser(new UserData(USER_SUE.username(), hashedPassword, USER_SUE.email()));
 
         ChessException exception = Assertions.assertThrows(ChessException.class, () ->
                 service.loginUser(WRONG_PASSWORD_SUE));
@@ -124,7 +127,8 @@ public class ServiceTests {
     @DisplayName("Successful logout")
     public void logoutSuccess() throws ChessException {
         service.clear();
-        var firstAuth = service.registerUser(USER_FRED);
+        var hashedPassword = BCrypt.hashpw(USER_FRED.password(), BCrypt.gensalt());
+        var firstAuth = service.registerUser(new UserData(USER_FRED.username(), hashedPassword, USER_FRED.email()));
 
         Assertions.assertDoesNotThrow(() -> service.logoutUser(firstAuth.authToken()));
         var secondAuth = Assertions.assertDoesNotThrow(() -> service.loginUser(USER_FRED));
