@@ -9,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
+import server.JoinRequest;
 import service.ChessException;
 
 import java.util.HashMap;
@@ -247,6 +248,65 @@ public class DataAccessTests {
         dataAccess.clear();
         var games = dataAccess.listGames();
         Assertions.assertEquals(new HashSet<>(), games);
+    }
+
+    @Test
+    @DisplayName("join game success")
+    public void joinGameSuccess() throws Exception {
+        dataAccess.clear();
+        var game = createTestGame();
+        var userOne = createTestUser();
+        var userTwo = createTestUser();
+
+        game = dataAccess.createGame(createTestGame());
+        dataAccess.createUser(userOne);
+        dataAccess.createUser(userTwo);
+
+        var joinRequest = new JoinRequest("WHITE", game.gameID());
+        dataAccess.joinGame(joinRequest, userOne.username());
+        joinRequest = new JoinRequest("BLACK", game.gameID());
+        dataAccess.joinGame(joinRequest, userTwo.username());
+
+        var retrievedGames = dataAccess.listGames();
+        var size = retrievedGames.size();
+        Assertions.assertEquals(1, size);
+
+        GameData updatedGame = new GameData(0, null, null, null, null);
+        for (GameData retrievedGame : retrievedGames) {
+            updatedGame = retrievedGame;
+        }
+
+        Assertions.assertEquals(userOne.username(), updatedGame.whiteUsername());
+        Assertions.assertEquals(userTwo.username(), updatedGame.blackUsername());
+        Assertions.assertEquals(game.gameID(), updatedGame.gameID());
+        Assertions.assertEquals(game.gameName(), updatedGame.gameName());
+    }
+
+    @Test
+    @DisplayName("fail to join where player color already taken")
+    public void joinAlreadyTaken() throws Exception {
+        dataAccess.clear();
+        var game = createTestGame();
+        var userOne = createTestUser();
+        var userTwo = createTestUser();
+
+        game = dataAccess.createGame(createTestGame());
+        dataAccess.createUser(userOne);
+        dataAccess.createUser(userTwo);
+
+        var joinRequest = new JoinRequest("WHITE", game.gameID());
+        dataAccess.joinGame(joinRequest, userOne.username());
+        var failRequest = new JoinRequest("WHITE", game.gameID());
+        ChessException exception = Assertions.assertThrows(ChessException.class,
+                () -> dataAccess.joinGame(failRequest, userTwo.username()));
+
+        String expectedMessage = "already taken";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 403;
+        int actualStatus = exception.getStatus();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
     }
 
 

@@ -224,7 +224,60 @@ public class SQLDataAccess implements DataAccess {
 
     @Override
     public void joinGame(JoinRequest request, String username) throws ChessException {
+        var gameID = request.gameID();
+        var playerColor = request.playerColor();
+        var game = getGameByID(gameID);
 
+        //bad request if player isn't black or white or if game doesn't exist
+        if ((!playerColor.equals("BLACK") && !playerColor.equals("WHITE"))
+                || game == null) {
+            throw new ChessException("bad request", 400);
+        }
+
+        //exception if player color is already taken
+        if ((playerColor.equals("WHITE") && game.whiteUsername() != null)
+                || (playerColor.equals("BLACK") && game.blackUsername() != null)) {
+            throw new ChessException("already taken", 403);
+        }
+
+        //if the game exists and white is available, add the user as whiteUsername
+        addPlayer(request, username);
+    }
+
+    private void addPlayer(JoinRequest request, String username) throws ChessException {
+        var statement = "";
+        if (request.playerColor().equals("WHITE")) {
+            statement = "UPDATE games SET whiteUsername=? WHERE id=?";
+        } else {
+            statement = "UPDATE games SET blackUsername=? WHERE id=?";
+        }
+
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setString(1, username);
+                ps.setInt(2, request.gameID());
+                ps.executeUpdate();
+            }
+        } catch (Exception ex) {
+            throw new ChessException(ex.getMessage(), 500);
+        }
+    }
+
+    private GameData getGameByID(int gameID) throws ChessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            var statement = "SELECT * FROM games WHERE id=?";
+            try (var ps = conn.prepareStatement(statement)) {
+                ps.setInt(1, gameID);
+                try (var rs = ps.executeQuery()) {
+                    if (rs.next()) {
+                        return readGame(rs);
+                    }
+                }
+            }
+        } catch (Exception ex) {
+            throw new ChessException("bad request", 400);
+        }
+        return null;
     }
 
     private final String[] createStatements = {
