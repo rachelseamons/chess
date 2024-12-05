@@ -1,6 +1,9 @@
 package server;
 
 import com.google.gson.Gson;
+import exception.ResponseException;
+import model.AuthData;
+import model.UserData;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -17,22 +20,25 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws Exception {
-        //TODO:: make a ResponseException class that this can throw
+    //TODO:: add all functions from Chess
+    public AuthData registerUser(UserData user) throws ResponseException {
+        var path = "/user";
+        return this.makeRequest("POST", path, user, AuthData.class);
+    }
+
+    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
             http.setRequestMethod(method);
             http.setDoOutput(true);
 
-            //TODO:: write these three functions use examples from ServerFacade in PetServer
             writeBody(request, http);
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
         } catch (Exception ex) {
-            //TODO:: throw the exception here
-            throw new Exception();
+            throw new ResponseException(500, ex.getMessage());
         }
     }
 
@@ -47,11 +53,10 @@ public class ServerFacade {
         }
     }
 
-    //TODO:: add your custom exception class to this one too
-    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, Exception {
+    private void throwIfNotSuccessful(HttpURLConnection http) throws IOException, ResponseException {
         var status = http.getResponseCode();
         if (!isSuccessful(status)) {
-            throw new Exception();
+            throw new ResponseException(status, "failure: " + status);
         }
     }
 
