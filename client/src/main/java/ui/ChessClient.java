@@ -5,13 +5,13 @@ import server.ServerFacade;
 
 import java.util.Arrays;
 
-public class Client {
+public class ChessClient {
     private final ServerFacade server;
     private final String serverUrl;
 
     private State state = State.LOGGEDOUT;
 
-    public Client(String serverUrl) {
+    public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
     }
@@ -30,8 +30,8 @@ public class Client {
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
 //                case "adoptall" -> adoptAllPets();
-                case "Register" -> registerUser(params);
-                case "Quit" -> "Quit"; //TODO:: might need to change state or smthg here
+                case "register" -> registerUser(params);
+                case "quit" -> "quit"; //TODO:: might need to change state or smthg here
                 default -> help();
             };
         } catch (ResponseException ex) {
@@ -45,19 +45,21 @@ public class Client {
 
     public String help() {
         if (state == State.LOGGEDOUT) {
-            //TODO:: update this text with what should print when you enter "help"
             return """
-                    - signIn <yourname>
-                    - quit
+                    register <USERNAME> <PASSWORD> <EMAIL> - to create an account
+                    login <USERNAME> <PASSWORD> - to play chess
+                    quit - playing chess
+                    help - with possible commands
                     """;
         }
         return """
-                - list
-                - adopt <pet id>
-                - rescue <name> <CAT|DOG|FROG|FISH>
-                - adoptAll
-                - signOut
-                - quit
+                create <NAME> - a game
+                list - games
+                join <ID> [WHITE|BLACK] - a game
+                observe <ID> - a game
+                logout - when you are done
+                quit - playing chess
+                help - with possible commands
                 """;
     }
 
