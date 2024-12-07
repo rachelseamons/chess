@@ -14,7 +14,7 @@ public class Repl {
     public void run() {
         System.out.printf("Welcome to chess 240. Type \"Help\" to get started.%n");
         System.out.print(client.help());
-        //TODO:: should I print the "help" list?
+        //TODO:: should I print the "help" list? currently am
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -33,6 +33,8 @@ public class Repl {
         }
         System.out.println();
     }
+
+    //TODO:: they have a function "notify" here; idk if I need that or if it's a websocket functionality
 
     public void printPrompt() {
         System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> ");

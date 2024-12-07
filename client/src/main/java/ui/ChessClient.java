@@ -24,6 +24,9 @@ public class ChessClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 //TODO:: add all your functions here using these formats as an example
+                // START HERE WITH REGISTERUSER (should be able to call into serverfacade; you already have that written,
+                // so once you connect here, it should function all the way down to the database.
+                // Also, write your first tests for your ServerFacade on registerUser
 //                case "signin" -> signIn(params);
 //                case "rescue" -> rescuePet(params);
 //                case "list" -> listPets();
