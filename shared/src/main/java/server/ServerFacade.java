@@ -20,7 +20,6 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    //TODO:: add all functions from Chess
     public AuthData registerUser(UserData user) throws ResponseException {
         var path = "/user";
         return this.makeRequest("POST", path, user, null, AuthData.class);

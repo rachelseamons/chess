@@ -28,7 +28,7 @@ public class EscapeSequences {
     public static final String SET_TEXT_COLOR_LIGHT_GREY = SET_TEXT_COLOR + "242m";
     public static final String SET_TEXT_COLOR_DARK_GREY = SET_TEXT_COLOR + "235m";
     public static final String SET_TEXT_COLOR_RED = SET_TEXT_COLOR + "160m";
-    public static final String SET_TEXT_COLOR_GREEN = SET_TEXT_COLOR + "46m";
+    public static final String SET_TEXT_COLOR_GREEN = SET_TEXT_COLOR + "35m";
     public static final String SET_TEXT_COLOR_YELLOW = SET_TEXT_COLOR + "226m";
     public static final String SET_TEXT_COLOR_BLUE = SET_TEXT_COLOR + "12m";
     public static final String SET_TEXT_COLOR_MAGENTA = SET_TEXT_COLOR + "5m";
@@ -61,5 +61,7 @@ public class EscapeSequences {
     public static final String BLACK_PAWN = " ♟ ";
     public static final String EMPTY = " \u2003 ";
 
-    public static String moveCursorToLocation(int x, int y) { return UNICODE_ESCAPE + "[" + y + ";" + x + "H"; }
+    public static String moveCursorToLocation(int x, int y) {
+        return UNICODE_ESCAPE + "[" + y + ";" + x + "H";
+    }
 }

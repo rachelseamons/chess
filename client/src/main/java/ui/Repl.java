@@ -24,8 +24,11 @@ public class Repl {
 
             try {
                 result = client.eval(line);
-                //TODO:: find a better green
-                System.out.print(SET_TEXT_COLOR_GREEN + result);
+                if (result.startsWith("Error:")) {
+                    System.out.println(SET_TEXT_COLOR_RED + result);
+                } else {
+                    System.out.print(SET_TEXT_COLOR_GREEN + result);
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

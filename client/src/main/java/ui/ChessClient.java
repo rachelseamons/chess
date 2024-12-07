@@ -33,14 +33,51 @@ public class ChessClient {
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
 //                case "adoptall" -> adoptAllPets();
-                //TODO:: make sure "logout" deletes the authToken after
+                case "login" -> loginUser(params);
+                case "logout" -> logoutUser();
                 case "register" -> registerUser(params);
+                case "help" -> help();
                 case "quit" -> "quit"; //TODO:: might need to change state or smthg here
-                default -> help();
+                default -> "Error: type \"help\" for available commands";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String loginUser(String... params) throws ResponseException {
+        if (params.length >= 2) {
+            if (state == State.LOGGEDIN) {
+                throw new ResponseException(500, "Error: already logged in");
+            }
+            var username = params[0];
+            var password = params[1];
+            var loginUser = new UserData(username, password, null);
+            try {
+                var authData = server.loginUser(loginUser);
+                state = State.LOGGEDIN;
+                authToken = authData.authToken();
+                return String.format("Successfully signed in");
+            } catch (ResponseException ex) {
+                throw new ResponseException(401, "Error: incorrect username or password");
+            }
+        }
+        throw new ResponseException(500, "Error: expected <username> <password>");
+    }
+
+    public String logoutUser() throws ResponseException {
+        if (authToken != null) {
+            assertSignedIn();
+            try {
+                server.logoutUser(authToken);
+                state = State.LOGGEDOUT;
+                authToken = null;
+                return ("Successfully logged out");
+            } catch (ResponseException ex) {
+                throw new ResponseException(401, "Error: not logged in");
+            }
+        }
+        throw new ResponseException(401, "Error: not logged in");
     }
 
     public String registerUser(String... params) throws ResponseException {
@@ -56,13 +93,13 @@ public class ChessClient {
                 return String.format("Successfully registered and signed in");
             } catch (ResponseException ex) {
                 switch (ex.getStatusCode()) {
-                    case 400 -> throw new ResponseException(400, "Expected: <username> <password> <email>");
-                    case 403 -> throw new ResponseException(403, "Username already taken");
+                    case 400 -> throw new ResponseException(400, "Error: expected <username> <password> <email>");
+                    case 403 -> throw new ResponseException(403, "Error: username already taken");
                     case 500 -> throw new ResponseException(500, "Error: try again");
                 }
             }
         }
-        throw new ResponseException(400, "Expected: <username> <password> <email>");
+        throw new ResponseException(400, "Error: expected <username> <password> <email>");
     }
 
     public String help() {
@@ -87,7 +124,7 @@ public class ChessClient {
 
     private void assertSignedIn() throws ResponseException {
         if (state == State.LOGGEDOUT) {
-            throw new ResponseException(400, "You must sign in");
+            throw new ResponseException(400, "Error: not logged in");
         }
     }
 
