@@ -44,11 +44,29 @@ public class ServerFacadeTests {
     @DisplayName("register user bad request")
     public void registerUserBad() throws ResponseException {
         var badUser = new UserData(null, null, null);
-        ResponseException exception = Assertions.assertThrows(ResponseException.class, () -> serverFacade.registerUser(badUser));
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.registerUser(badUser));
 
-        String expectedMessage = "Bad Request";
+        String expectedMessage = "failure: 400";
         String actualMessage = exception.getMessage();
         int expectedStatus = 400;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("register user already taken")
+    public void registerUserAlreadyTaken() throws ResponseException {
+        var newUser = createTestUser();
+        serverFacade.registerUser(newUser);
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.registerUser(newUser));
+
+        String expectedMessage = "failure: 403";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 403;
         int actualStatus = exception.getStatusCode();
 
         Assertions.assertEquals(expectedMessage, actualMessage);
