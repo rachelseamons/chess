@@ -87,6 +87,39 @@ public class ServerFacadeTests {
         Assertions.assertEquals(newUser.username(), registeredUser.username());
     }
 
+    @Test
+    @DisplayName("login success")
+    public void loginSuccess() throws ResponseException {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+
+        serverFacade.logoutUser(registeredUser.authToken());
+
+        var loggedInUser = serverFacade.loginUser(newUser);
+        Assertions.assertEquals(newUser.username(), loggedInUser.username());
+        Assertions.assertNotNull(loggedInUser.authToken());
+    }
+
+    @Test
+    @DisplayName("logout success")
+    public void logoutSuccess() throws ResponseException {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+
+        serverFacade.logoutUser(registeredUser.authToken());
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.registerUser(newUser));
+
+        String expectedMessage = "failure: 403";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 403;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
     private UserData createTestUser() {
         var username = UUID.randomUUID().toString();
         var hashedPassword = UUID.randomUUID().toString();

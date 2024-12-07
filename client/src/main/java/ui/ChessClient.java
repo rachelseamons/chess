@@ -33,6 +33,7 @@ public class ChessClient {
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
 //                case "adoptall" -> adoptAllPets();
+                //TODO:: make sure "logout" deletes the authToken after
                 case "register" -> registerUser(params);
                 case "quit" -> "quit"; //TODO:: might need to change state or smthg here
                 default -> help();

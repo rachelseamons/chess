@@ -23,15 +23,25 @@ public class ServerFacade {
     //TODO:: add all functions from Chess
     public AuthData registerUser(UserData user) throws ResponseException {
         var path = "/user";
-        return this.makeRequest("POST", path, user, AuthData.class);
+        return this.makeRequest("POST", path, user, null, AuthData.class);
+    }
+
+    public AuthData loginUser(UserData user) throws ResponseException {
+        var path = "/session";
+        return this.makeRequest("POST", path, user, null, AuthData.class);
+    }
+
+    public void logoutUser(String authToken) throws ResponseException {
+        var path = "/session";
+        this.makeRequest("DELETE", path, null, authToken, null);
     }
 
     public void clear() throws ResponseException {
         var path = "/db";
-        this.makeRequest("DELETE", path, null, null);
+        this.makeRequest("DELETE", path, null, null, null);
     }
 
-    private <T> T makeRequest(String method, String path, Object request, Class<T> responseClass) throws ResponseException {
+    private <T> T makeRequest(String method, String path, Object request, String authorization, Class<T> responseClass) throws ResponseException {
         try {
             URL url = (new URI(serverUrl + path)).toURL();
             HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -39,6 +49,9 @@ public class ServerFacade {
             http.setDoOutput(true);
 
             writeBody(request, http);
+            if (authorization != null) {
+                http.addRequestProperty("Authorization", authorization);
+            }
             http.connect();
             throwIfNotSuccessful(http);
             return readBody(http, responseClass);
