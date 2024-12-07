@@ -1,6 +1,7 @@
 package ui;
 
 import exception.ResponseException;
+import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -10,10 +11,12 @@ public class ChessClient {
     private final String serverUrl;
 
     private State state = State.LOGGEDOUT;
+    private String authToken;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
+
     }
 
     public String eval(String input) {
@@ -24,9 +27,6 @@ public class ChessClient {
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 //TODO:: add all your functions here using these formats as an example
-                // START HERE WITH REGISTERUSER (should be able to call into serverfacade; you already have that written,
-                // so once you connect here, it should function all the way down to the database.
-                // Also, write your first tests for your ServerFacade on registerUser
 //                case "signin" -> signIn(params);
 //                case "rescue" -> rescuePet(params);
 //                case "list" -> listPets();
@@ -43,7 +43,25 @@ public class ChessClient {
     }
 
     public String registerUser(String... params) throws ResponseException {
-        return null;
+        if (params.length >= 3) {
+            var username = params[0];
+            var password = params[1];
+            var email = params[2];
+            var user = new UserData(username, password, email);
+            try {
+                var authData = server.registerUser(user);
+                state = State.LOGGEDIN;
+                authToken = authData.authToken();
+                return String.format("Successfully registered and signed in");
+            } catch (ResponseException ex) {
+                switch (ex.getStatusCode()) {
+                    case 400 -> throw new ResponseException(400, "Expected: <username> <password> <email>");
+                    case 403 -> throw new ResponseException(403, "Username already taken");
+                    case 500 -> throw new ResponseException(500, "Error: try again");
+                }
+            }
+        }
+        throw new ResponseException(400, "Expected: <username> <password> <email>");
     }
 
     public String help() {
@@ -70,5 +88,9 @@ public class ChessClient {
         if (state == State.LOGGEDOUT) {
             throw new ResponseException(400, "You must sign in");
         }
+    }
+
+    public String getState() {
+        return state.toString();
     }
 }

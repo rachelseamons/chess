@@ -37,6 +37,12 @@ public class Repl {
     //TODO:: they have a function "notify" here; idk if I need that or if it's a websocket functionality
 
     public void printPrompt() {
-        System.out.print("\n" + RESET_TEXT_COLOR + "[LOGGED_OUT] >>> ");
+        var state = "";
+        if (client.getState() == "LOGGEDOUT") {
+            state = "[Logged out]";
+        } else {
+            state = "[Logged in]";
+        }
+        System.out.print("\n" + RESET_TEXT_COLOR + state + " >>> ");
     }
 }

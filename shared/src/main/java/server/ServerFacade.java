@@ -50,7 +50,6 @@ public class ServerFacade {
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
-                //TODO:: what is this doing? it doesn't return anywhere, so it feels pointless
             }
         }
     }
