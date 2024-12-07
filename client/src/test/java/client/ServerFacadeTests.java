@@ -101,6 +101,43 @@ public class ServerFacadeTests {
     }
 
     @Test
+    @DisplayName("fail login with wrong password")
+    public void loginFail() throws ResponseException {
+        var newUser = createTestUser();
+        var badUser = new UserData(newUser.username(), "bad pass", null);
+        var registeredUser = serverFacade.registerUser(newUser);
+
+        serverFacade.logoutUser(registeredUser.authToken());
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.loginUser(badUser));
+
+        String expectedMessage = "failure: 401";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("fail login non-existing user")
+    public void loginNotExist() {
+        var newUser = createTestUser();
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.loginUser(newUser));
+
+        String expectedMessage = "failure: 401";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
     @DisplayName("logout success")
     public void logoutSuccess() throws ResponseException {
         var newUser = createTestUser();
@@ -114,6 +151,25 @@ public class ServerFacadeTests {
         String expectedMessage = "failure: 403";
         String actualMessage = exception.getMessage();
         int expectedStatus = 403;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("fail to logout twice")
+    public void logoutTwiceFail() throws ResponseException {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+        serverFacade.logoutUser(registeredUser.authToken());
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.logoutUser(registeredUser.authToken()));
+
+        String expectedMessage = "failure: 401";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
         int actualStatus = exception.getStatusCode();
 
         Assertions.assertEquals(expectedMessage, actualMessage);
