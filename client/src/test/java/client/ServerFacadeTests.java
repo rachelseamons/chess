@@ -73,6 +73,20 @@ public class ServerFacadeTests {
         Assertions.assertEquals(expectedStatus, actualStatus);
     }
 
+    @Test
+    @DisplayName("clear")
+    public void clear() throws ResponseException {
+        //can add more functionality testing everything is emptied
+        var newUser = createTestUser();
+        Assertions.assertNotNull(serverFacade.registerUser(newUser));
+        Assertions.assertThrows(ResponseException.class, () -> serverFacade.registerUser(newUser));
+
+        serverFacade.clear();
+
+        var registeredUser = serverFacade.registerUser(newUser);
+        Assertions.assertEquals(newUser.username(), registeredUser.username());
+    }
+
     private UserData createTestUser() {
         var username = UUID.randomUUID().toString();
         var hashedPassword = UUID.randomUUID().toString();
