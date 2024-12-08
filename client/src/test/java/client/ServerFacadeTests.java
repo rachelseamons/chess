@@ -211,7 +211,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("create game bad auth")
-    public void createGameBadAuth() throws ResponseException {
+    public void createGameBadAuth() {
         var badAuth = "bad";
         var newGame = createTestGame();
 

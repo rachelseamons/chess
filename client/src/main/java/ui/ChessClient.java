@@ -1,6 +1,7 @@
 package ui;
 
 import exception.ResponseException;
+import model.GameData;
 import model.UserData;
 import server.ServerFacade;
 
@@ -32,6 +33,7 @@ public class ChessClient {
 //                case "signout" -> signOut();
 //                case "adopt" -> adoptPet(params);
 //                case "adoptall" -> adoptAllPets();
+                case "create" -> createGame(params);
                 case "login" -> loginUser(params);
                 case "logout" -> logoutUser();
                 case "register" -> registerUser(params);
@@ -42,6 +44,27 @@ public class ChessClient {
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String createGame(String... param) throws ResponseException {
+        if (param.length == 1) {
+            assertSignedIn();
+            var gameName = param[0];
+            var newGame = new GameData(0, null, null, gameName, null);
+            try {
+                var createdGame = server.createGame(authToken, newGame);
+                return String.format("Successfully created game " + createdGame.gameName());
+            } catch (ResponseException ex) {
+                switch (ex.getStatusCode()) {
+                    case 400 -> throw new ResponseException(400, "Error: expected <game name>");
+                    case 401 -> throw new ResponseException(401, "Error: not logged in");
+                    case 500 -> throw new ResponseException(500, "Error: try again");
+                }
+            }
+        } else if (param.length > 1) {
+            throw new ResponseException(400, "Error: game name must be one word");
+        }
+        throw new ResponseException(401, "Error: not logged in");
     }
 
     public String loginUser(String... params) throws ResponseException {
