@@ -6,6 +6,8 @@ import model.UserData;
 import server.ServerFacade;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ChessClient {
     private final ServerFacade server;
@@ -13,6 +15,7 @@ public class ChessClient {
 
     private State state = State.LOGGEDOUT;
     private String authToken;
+    private Map<String, GameData> games = new HashMap<>();
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -27,6 +30,7 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "list" -> listGames();
                 case "create" -> createGame(params);
                 case "login" -> loginUser(params);
                 case "logout" -> logoutUser();
@@ -38,6 +42,41 @@ public class ChessClient {
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String listGames() throws ResponseException {
+        if (authToken != null) {
+            assertSignedIn();
+            try {
+                var retrievedGames = server.listGames(authToken);
+                int i = 1;
+                for (GameData game : retrievedGames) {
+                    var name = game.gameName();
+                    if (games.containsKey(name)) {
+                        name = String.format(name + "_[" + i + "]");
+                        i = i + 1;
+                        var newNameGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), name, game.game());
+                        games.put(name, newNameGame);
+                    } else {
+                        games.put(name, game);
+                    }
+                }
+                i = 1;
+                StringBuilder response = new StringBuilder();
+                for (GameData game : games.values()) {
+                    response.append("\n").append(i).append(". ");
+                    response.append(gameDataToString(game));
+                    i = i + 1;
+                }
+                return response.toString();
+            } catch (ResponseException ex) {
+                switch (ex.getStatusCode()) {
+                    case 401 -> throw new ResponseException(401, "Error: not logged in");
+                    case 500 -> throw new ResponseException(500, "Error: try again");
+                }
+            }
+        }
+        throw new ResponseException(401, "Error: not logged in");
     }
 
     public String createGame(String... param) throws ResponseException {
@@ -136,6 +175,20 @@ public class ChessClient {
                 quit - playing chess
                 help - with possible commands
                 """;
+    }
+
+    private String gameDataToString(GameData gameData) {
+        var gameName = gameData.gameName();
+        var whiteUsername = gameData.whiteUsername();
+        var blackUsername = gameData.blackUsername();
+
+        if (whiteUsername == null) {
+            whiteUsername = "None";
+        }
+        if (blackUsername == null) {
+            blackUsername = "None";
+        }
+        return String.format("game name: " + gameName + "\n\tplayer white: " + whiteUsername + "\n\tplayer black: " + blackUsername);
     }
 
     private void assertSignedIn() throws ResponseException {
