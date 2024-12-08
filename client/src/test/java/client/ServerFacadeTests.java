@@ -8,6 +8,8 @@ import server.Server;
 import server.ServerFacade;
 
 import java.nio.file.ReadOnlyFileSystemException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -27,6 +29,11 @@ public class ServerFacadeTests {
     @AfterAll
     static void stopServer() {
         server.stop();
+    }
+
+    @BeforeEach
+    void clearing() throws ResponseException {
+        serverFacade.clear();
     }
 
 
@@ -217,6 +224,58 @@ public class ServerFacadeTests {
 
         ResponseException exception = Assertions.assertThrows(ResponseException.class,
                 () -> serverFacade.createGame(badAuth, newGame));
+
+        String expectedMessage = "failure: 401";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("list multiple games")
+    public void listMultipleGames() throws ResponseException {
+        serverFacade.clear();
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var newGame1 = createTestGame();
+        var newGame2 = createTestGame();
+        serverFacade.createGame(registeredUser.authToken(), newGame1);
+        serverFacade.createGame(registeredUser.authToken(), newGame2);
+
+        var returnedGames = serverFacade.listGames(registeredUser.authToken());
+        Set<String> returnedNames = new HashSet<>();
+        for (GameData game : returnedGames) {
+            returnedNames.add(game.gameName());
+        }
+
+        Set<String> expectedNames = new HashSet<>();
+        expectedNames.add(newGame1.gameName());
+        expectedNames.add(newGame2.gameName());
+
+        Assertions.assertEquals(expectedNames, returnedNames);
+    }
+
+    @Test
+    @DisplayName("list no games")
+    public void listNoGames() throws ResponseException {
+        serverFacade.clear();
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var emptySet = new HashSet<GameData>();
+
+        Assertions.assertEquals(emptySet, serverFacade.listGames(registeredUser.authToken()));
+    }
+
+    @Test
+    @DisplayName("list games bad auth")
+    public void listGamesBadAuth() {
+        var badAuth = "bad";
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.listGames(badAuth));
 
         String expectedMessage = "failure: 401";
         String actualMessage = exception.getMessage();

@@ -13,6 +13,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.Set;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -39,6 +40,14 @@ public class ServerFacade {
     public GameData createGame(String authToken, GameData game) throws ResponseException {
         var path = "/game";
         return this.makeRequest("POST", path, game, authToken, GameData.class);
+    }
+
+    public Set<GameData> listGames(String authToken) throws ResponseException {
+        var path = "/game";
+        record listGamesResponse(Set<GameData> games) {
+        }
+        var response = this.makeRequest("GET", path, null, authToken, listGamesResponse.class);
+        return response.games;
     }
 
     public void clear() throws ResponseException {
