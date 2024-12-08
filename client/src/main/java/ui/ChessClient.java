@@ -15,7 +15,7 @@ public class ChessClient {
 
     private State state = State.LOGGEDOUT;
     private String authToken;
-    private Map<String, GameData> games = new HashMap<>();
+    private Map<Integer, GameData> games = new HashMap<>();
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -51,22 +51,13 @@ public class ChessClient {
                 var retrievedGames = server.listGames(authToken);
                 int i = 1;
                 for (GameData game : retrievedGames) {
-                    var name = game.gameName();
-                    if (games.containsKey(name)) {
-                        name = String.format(name + "_[" + i + "]");
-                        i = i + 1;
-                        var newNameGame = new GameData(game.gameID(), game.whiteUsername(), game.blackUsername(), name, game.game());
-                        games.put(name, newNameGame);
-                    } else {
-                        games.put(name, game);
-                    }
-                }
-                i = 1;
-                StringBuilder response = new StringBuilder();
-                for (GameData game : games.values()) {
-                    response.append("\n").append(i).append(". ");
-                    response.append(gameDataToString(game));
+                    games.put(i, game);
                     i = i + 1;
+                }
+                StringBuilder response = new StringBuilder();
+                for (Integer gameNumber : games.keySet()) {
+                    response.append("\n").append(gameNumber).append(". ");
+                    response.append(gameDataToString(games.get(gameNumber)));
                 }
                 return response.toString();
             } catch (ResponseException ex) {
