@@ -26,7 +26,6 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                //TODO:: add all your functions here using these formats as an example
 //                case "signin" -> signIn(params);
 //                case "rescue" -> rescuePet(params);
 //                case "list" -> listPets();
@@ -57,7 +56,7 @@ public class ChessClient {
                 var authData = server.loginUser(loginUser);
                 state = State.LOGGEDIN;
                 authToken = authData.authToken();
-                return String.format("Successfully signed in");
+                return "Successfully signed in";
             } catch (ResponseException ex) {
                 throw new ResponseException(401, "Error: incorrect username or password");
             }
@@ -90,7 +89,7 @@ public class ChessClient {
                 var authData = server.registerUser(user);
                 state = State.LOGGEDIN;
                 authToken = authData.authToken();
-                return String.format("Successfully registered and signed in");
+                return "Successfully registered and signed in";
             } catch (ResponseException ex) {
                 switch (ex.getStatusCode()) {
                     case 400 -> throw new ResponseException(400, "Error: expected <username> <password> <email>");

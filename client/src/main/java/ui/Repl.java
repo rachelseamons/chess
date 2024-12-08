@@ -14,7 +14,6 @@ public class Repl {
     public void run() {
         System.out.printf("Welcome to chess 240. Type \"Help\" to get started.%n");
         System.out.print(client.help());
-        //TODO:: should I print the "help" list? currently am
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -41,7 +40,7 @@ public class Repl {
 
     public void printPrompt() {
         var state = "";
-        if (client.getState() == "LOGGEDOUT") {
+        if (client.getState().equals("LOGGEDOUT")) {
             state = "[Logged out]";
         } else {
             state = "[Logged in]";

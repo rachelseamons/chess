@@ -102,7 +102,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("fail login with wrong password")
-    public void loginFail() throws ResponseException {
+    public void loginWrongPassword() throws ResponseException {
         var newUser = createTestUser();
         var badUser = new UserData(newUser.username(), "bad pass", null);
         var registeredUser = serverFacade.registerUser(newUser);
@@ -166,6 +166,57 @@ public class ServerFacadeTests {
 
         ResponseException exception = Assertions.assertThrows(ResponseException.class,
                 () -> serverFacade.logoutUser(registeredUser.authToken()));
+
+        String expectedMessage = "failure: 401";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 401;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("create game success")
+    public void createGameSuccess() throws ResponseException {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var newGame = createTestGame();
+        var createdGame = serverFacade.createGame(registeredUser.authToken(), newGame);
+
+        Assertions.assertEquals(newGame.gameName(), createdGame.gameName());
+        Assertions.assertNotEquals(0, createdGame.gameID());
+        Assertions.assertNull(createdGame.blackUsername());
+        Assertions.assertNull(createdGame.whiteUsername());
+    }
+
+    @Test
+    @DisplayName("create game no name")
+    public void createGameNoName() throws ResponseException {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var badGame = new GameData(0, null, null, null, null);
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.createGame(registeredUser.authToken(), badGame));
+
+        String expectedMessage = "failure: 400";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 400;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("create game bad auth")
+    public void createGameBadAuth() throws ResponseException {
+        var badAuth = "bad";
+        var newGame = createTestGame();
+
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.createGame(badAuth, newGame));
 
         String expectedMessage = "failure: 401";
         String actualMessage = exception.getMessage();

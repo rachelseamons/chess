@@ -1,8 +1,6 @@
 import chess.*;
 import ui.Repl;
 
-import java.util.Scanner;
-
 import server.Server;
 
 public class Main {
