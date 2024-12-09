@@ -55,7 +55,7 @@ public class BoardPrinter {
     }
 
     private static void drawColumnLabel(PrintStream out, String columnLabel) {
-        String paddedLabel = String.format(" " + columnLabel + " ");
+        String paddedLabel = String.format(" " + columnLabel + "\u2003");
         printColumnLabel(out, paddedLabel);
     }
 
@@ -67,7 +67,7 @@ public class BoardPrinter {
     private static void drawChessBoard(PrintStream out) {
         for (int boardRow = 0; boardRow < BOARD_SIZE_IN_SQUARES; ++boardRow) {
             setLabelTheme(out);
-            String rowLabel = String.format(" " + rowLabels[0] + " ");
+            String rowLabel = String.format(" " + rowLabels[boardRow] + " ");
             out.print(rowLabel);
             if (boardRow == 0 || boardRow == 7) {
                 if (drawWhite) {
@@ -117,6 +117,27 @@ public class BoardPrinter {
                     out.print(BLACK_KING);
                 }
             }
+        } else {
+            out.print(SET_TEXT_COLOR_WHITE);
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    brownSquare(out);
+                } else {
+                    greenSquare(out);
+                }
+
+                if (col == 0 || col == 7) {
+                    out.print(BLACK_ROOK);
+                } else if (col == 1 || col == 6) {
+                    out.print(BLACK_KNIGHT);
+                } else if (col == 2 || col == 5) {
+                    out.print(BLACK_BISHOP);
+                } else if (col == 3) {
+                    out.print(BLACK_QUEEN);
+                } else {
+                    out.print(BLACK_KING);
+                }
+            }
         }
     }
 
@@ -124,21 +145,100 @@ public class BoardPrinter {
         if (boardRow == 0) {
             out.print(SET_TEXT_COLOR_WHITE);
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
-                greenSquare(out);
+                if (col % 2 == 0) {
+                    greenSquare(out);
+                } else {
+                    brownSquare(out);
+                }
+
+                if (col == 0 || col == 7) {
+                    out.print(BLACK_ROOK);
+                } else if (col == 1 || col == 6) {
+                    out.print(BLACK_KNIGHT);
+                } else if (col == 2 || col == 5) {
+                    out.print(BLACK_BISHOP);
+                } else if (col == 3) {
+                    out.print(BLACK_KING);
+                } else {
+                    out.print(BLACK_QUEEN);
+                }
+            }
+        } else {
+            out.print(SET_TEXT_COLOR_BLACK);
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    brownSquare(out);
+                } else {
+                    greenSquare(out);
+                }
+
+                if (col == 0 || col == 7) {
+                    out.print(BLACK_ROOK);
+                } else if (col == 1 || col == 6) {
+                    out.print(BLACK_KNIGHT);
+                } else if (col == 2 || col == 5) {
+                    out.print(BLACK_BISHOP);
+                } else if (col == 3) {
+                    out.print(BLACK_KING);
+                } else {
+                    out.print(BLACK_QUEEN);
+                }
             }
         }
     }
 
     private static void drawWhitePawnRow(PrintStream out, Integer boardRow) {
+        out.print(SET_TEXT_COLOR_WHITE);
+        if (boardRow == 1) {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    brownSquare(out);
+                } else {
+                    greenSquare(out);
+                }
 
+                out.print(BLACK_PAWN);
+            }
+        } else {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    greenSquare(out);
+                } else {
+                    brownSquare(out);
+                }
+
+                out.print(BLACK_PAWN);
+            }
+        }
     }
 
     private static void drawBlackPawnRow(PrintStream out, Integer boardRow) {
+        out.print(SET_TEXT_COLOR_BLACK);
+        if (boardRow == 1) {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    brownSquare(out);
+                } else {
+                    greenSquare(out);
+                }
 
+                out.print(BLACK_PAWN);
+            }
+        } else {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    greenSquare(out);
+                } else {
+                    brownSquare(out);
+                }
+
+                out.print(BLACK_PAWN);
+            }
+        }
     }
 
     private static void setLabelTheme(PrintStream out) {
-        out.print(SET_BG_COLOR_BLACK);
+        out.print(RESET_BG_COLOR);
         out.print(SET_TEXT_COLOR_GREEN);
     }
 
