@@ -8,7 +8,6 @@ import server.JoinRequest;
 import server.Server;
 import server.ServerFacade;
 
-import java.nio.file.ReadOnlyFileSystemException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;

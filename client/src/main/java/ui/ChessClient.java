@@ -30,6 +30,8 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                //TODO:: remove print option
+                case "print" -> printTest();
                 case "list" -> listGames();
                 case "create" -> createGame(params);
                 case "login" -> loginUser(params);
@@ -48,12 +50,8 @@ public class ChessClient {
         if (authToken != null) {
             assertSignedIn();
             try {
-                var retrievedGames = server.listGames(authToken);
-                int i = 1;
-                for (GameData game : retrievedGames) {
-                    games.put(i, game);
-                    i = i + 1;
-                }
+                updateGames();
+
                 StringBuilder response = new StringBuilder();
                 for (Integer gameNumber : games.keySet()) {
                     response.append("\n").append(gameNumber).append(". ");
@@ -190,5 +188,30 @@ public class ChessClient {
 
     public String getState() {
         return state.toString();
+    }
+
+    private void updateGames() throws ResponseException {
+        try {
+            Map<Integer, GameData> updatedGames = new HashMap<>();
+            var retrievedGames = server.listGames(authToken);
+            int i = 1;
+            for (GameData game : retrievedGames) {
+                updatedGames.put(i, game);
+                i = i + 1;
+            }
+            games = updatedGames;
+        } catch (ResponseException ex) {
+            throw new ResponseException(500, "Error: could not get games");
+        }
+    }
+
+    private void printBoardWhite() throws ResponseException {
+
+    }
+
+    private String printTest() throws ResponseException {
+        var printer = new BoardPrinter();
+        printer.print();
+        return "";
     }
 }
