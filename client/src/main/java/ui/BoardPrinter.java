@@ -213,31 +213,15 @@ public class BoardPrinter {
 
     private static void drawWhitePawnRow(PrintStream out, Integer boardRow) {
         out.print(SET_TEXT_COLOR_WHITE);
-        if (boardRow == 1) {
-            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
-                if (col % 2 == 0) {
-                    greySquare(out);
-                } else {
-                    greenSquare(out);
-                }
-
-                out.print(BLACK_PAWN);
-            }
-        } else {
-            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
-                if (col % 2 == 0) {
-                    greenSquare(out);
-                } else {
-                    greySquare(out);
-                }
-
-                out.print(BLACK_PAWN);
-            }
-        }
+        printPawnRow(out, boardRow);
     }
 
     private static void drawBlackPawnRow(PrintStream out, Integer boardRow) {
         out.print(SET_TEXT_COLOR_BLACK);
+        printPawnRow(out, boardRow);
+    }
+
+    private static void printPawnRow(PrintStream out, Integer boardRow) {
         if (boardRow == 1) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (col % 2 == 0) {

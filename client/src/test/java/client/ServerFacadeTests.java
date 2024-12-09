@@ -92,6 +92,7 @@ public class ServerFacadeTests {
 
         var registeredUser = serverFacade.registerUser(newUser);
         Assertions.assertEquals(newUser.username(), registeredUser.username());
+        serverFacade.clear();
     }
 
     @Test

@@ -121,6 +121,9 @@ public class ChessClient {
             assertSignedIn();
             try {
                 updateGames();
+                if (games.isEmpty()) {
+                    return "No games created";
+                }
 
                 StringBuilder response = new StringBuilder();
                 for (Integer gameNumber : games.keySet()) {
@@ -264,31 +267,25 @@ public class ChessClient {
         try {
             Map<Integer, GameData> updatedGames = new HashMap<>();
             var retrievedGames = server.listGames(authToken);
-            if (games.isEmpty()) {
-                int i = 1;
-                for (GameData game : retrievedGames) {
-                    updatedGames.put(i, game);
-                    i = i + 1;
-                }
-                games = updatedGames;
-            } else {
-                int i = games.size() + 1;
-                for (GameData updatedGame : retrievedGames) {
-                    boolean gameMatched = false;
-                    for (Integer oldGame : games.keySet()) {
-                        if (updatedGame.gameID() == games.get(oldGame).gameID()) {
-                            games.put(oldGame, updatedGame);
-                            gameMatched = true;
-                        }
-                    }
-                    if (!gameMatched) {
-                        updatedGames.put(i, updatedGame);
-                    }
-                }
 
-                for (Integer gameNumber : updatedGames.keySet()) {
-                    games.put(gameNumber, updatedGames.get(gameNumber));
+            for (GameData updatedGame : retrievedGames) {
+                updatedGames.put(updatedGame.gameID(), updatedGame);
+            }
+
+            for (Integer oldGame : games.keySet()) {
+                if (updatedGames.containsKey(games.get(oldGame).gameID())) {
+                    games.put(oldGame, updatedGames.get(games.get(oldGame).gameID()));
+                    updatedGames.remove(games.get(oldGame).gameID());
                 }
+            }
+
+            var i = games.size() + 1;
+            for (GameData game : updatedGames.values()) {
+                games.put(i, game);
+            }
+
+            for (Integer gameNumber : updatedGames.keySet()) {
+                games.put(gameNumber, updatedGames.get(gameNumber));
             }
         } catch (ResponseException ex) {
             throw new ResponseException(500, "Error: could not get games");
