@@ -210,7 +210,7 @@ public class ChessClient {
     }
 
     private String printTest() throws ResponseException {
-        var printer = new BoardPrinter();
+        var printer = new BoardPrinter(true);
         printer.print();
         return "";
     }

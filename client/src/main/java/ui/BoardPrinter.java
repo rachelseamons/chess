@@ -13,23 +13,32 @@ public class BoardPrinter {
 
     // Padded characters
     private static final String EMPTY = EscapeSequences.EMPTY;
+    private static String[] columnLabels;
+    private String[] rowLabels;
+
+    public BoardPrinter(boolean printWhite) {
+        if (printWhite) {
+            columnLabels = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
+        } else {
+            columnLabels = new String[]{"h", "g", "f", "e", "d", "c", "b", "a"};
+        }
+    }
 
     public void print() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
-        String[] labels = new String[]{"a", "b", "c", "d", "e", "f", "g", "h"};
-        drawColumnLabels(out, labels);
+        drawColumnLabels(out);
 
         out.print(RESET_TEXT_COLOR);
         out.print(RESET_BG_COLOR);
     }
 
-    private static void drawColumnLabels(PrintStream out, String[] labels) {
+    private static void drawColumnLabels(PrintStream out) {
         setBlack(out);
 
         out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
         for (int boardCol = 0; boardCol < BOARD_SIZE_IN_SQUARES; ++boardCol) {
-            drawColumnLabel(out, labels[boardCol]);
+            drawColumnLabel(out, columnLabels[boardCol]);
 //            out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
         }
         out.print(EMPTY.repeat(LINE_WIDTH_IN_PADDED_CHARS));
