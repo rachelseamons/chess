@@ -24,7 +24,7 @@ public class Repl {
             try {
                 result = client.eval(line);
                 if (result.startsWith("Error:")) {
-                    System.out.println(SET_TEXT_COLOR_RED + result);
+                    System.out.println(/*SET_TEXT_COLOR_RED + */result);
                 } else {
                     System.out.print(SET_TEXT_COLOR_GREEN + result);
                 }

@@ -52,13 +52,13 @@ public class ChessClient {
             var gameNumber = param[0];
             for (int i = 0; i < gameNumber.length(); i++) {
                 if (!Character.isDigit(gameNumber.charAt(i))) {
-                    throw new ResponseException(400, "Error: game ID does not exist");
+                    throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: game ID does not exist");
                 }
             }
 
             var gameNumberInt = Integer.parseInt(gameNumber);
             if (!games.containsKey(gameNumberInt)) {
-                throw new ResponseException(400, "Error: game ID does not exist");
+                throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: game ID does not exist");
             }
             var printer = new BoardPrinter(true);
             printer.print();
@@ -66,7 +66,7 @@ public class ChessClient {
             //if I were to be continuing this project, I would add a map at this level
             //that tracks all the observers for each game (Map<Integer, Set<String>> observers).
         }
-        throw new ResponseException(400, "Error: expected <gameID>");
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: expected <gameID>");
     }
 
     public String joinGame(String... params) throws ResponseException {
@@ -77,13 +77,13 @@ public class ChessClient {
             var gameNumber = params[0];
             for (int i = 0; i < gameNumber.length(); i++) {
                 if (!Character.isDigit(gameNumber.charAt(i))) {
-                    throw new ResponseException(400, "Error: game ID does not exist");
+                    throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: game ID does not exist");
                 }
             }
 
             var gameNumberInt = Integer.parseInt(gameNumber);
             if (!games.containsKey(gameNumberInt)) {
-                throw new ResponseException(400, "Error: game ID does not exist");
+                throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: game ID does not exist");
             }
             var playerColor = params[1];
             playerColor = playerColor.toUpperCase();
@@ -104,13 +104,16 @@ public class ChessClient {
                 return "";
             } catch (ResponseException ex) {
                 switch (ex.getStatusCode()) {
-                    case 400 -> throw new ResponseException(400, "Error: expected <gameID> [WHITE|BLACK]");
-                    case 401 -> throw new ResponseException(401, "Error: not logged in");
-                    case 403 -> throw new ResponseException(403, "Error: player color already taken");
+                    case 400 ->
+                            throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: expected <gameID> [WHITE|BLACK]");
+                    case 401 ->
+                            throw new ResponseException(401, EscapeSequences.SET_TEXT_COLOR_RED + "Error: not logged in");
+                    case 403 ->
+                            throw new ResponseException(403, EscapeSequences.SET_TEXT_COLOR_RED + "Error: player color already taken");
                 }
             }
         }
-        throw new ResponseException(400, "Error: expected <gameID> [WHITE|BLACK]");
+        throw new ResponseException(400, EscapeSequences.SET_TEXT_COLOR_RED + "Error: expected <gameID> [WHITE|BLACK]");
     }
 
     public String listGames() throws ResponseException {
