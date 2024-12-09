@@ -33,11 +33,8 @@ public class BoardPrinter {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(ERASE_SCREEN);
         drawColumnLabels(out);
-
-        out.print(RESET_TEXT_COLOR);
-        out.print(RESET_BG_COLOR);
-
         drawChessBoard(out);
+        drawColumnLabels(out);
     }
 
     private static void drawColumnLabels(PrintStream out) {
@@ -87,11 +84,39 @@ public class BoardPrinter {
                 } else {
                     drawBlackPawnRow(out, boardRow);
                 }
+            } else {
+                drawEmptyRow(out, boardRow);
             }
             setLabelTheme(out);
             out.print(rowLabel);
             resetTheme(out);
             out.println();
+        }
+    }
+
+    private static void drawEmptyRow(PrintStream out, Integer boardRow) {
+        if (boardRow % 2 == 0) {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    greenSquare(out);
+                    out.print(SET_TEXT_COLOR_GREEN);
+                } else {
+                    greySquare(out);
+                    out.print(SET_TEXT_COLOR_LIGHT_GREY);
+                }
+                out.print(BLACK_KING);
+            }
+        } else {
+            for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
+                if (col % 2 == 0) {
+                    greySquare(out);
+                    out.print(SET_TEXT_COLOR_LIGHT_GREY);
+                } else {
+                    greenSquare(out);
+                    out.print(SET_TEXT_COLOR_GREEN);
+                }
+                out.print(BLACK_KING);
+            }
         }
     }
 
@@ -102,7 +127,7 @@ public class BoardPrinter {
                 if (col % 2 == 0) {
                     greenSquare(out);
                 } else {
-                    brownSquare(out);
+                    greySquare(out);
                 }
 
                 if (col == 0 || col == 7) {
@@ -121,7 +146,7 @@ public class BoardPrinter {
             out.print(SET_TEXT_COLOR_WHITE);
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (col % 2 == 0) {
-                    brownSquare(out);
+                    greySquare(out);
                 } else {
                     greenSquare(out);
                 }
@@ -148,7 +173,7 @@ public class BoardPrinter {
                 if (col % 2 == 0) {
                     greenSquare(out);
                 } else {
-                    brownSquare(out);
+                    greySquare(out);
                 }
 
                 if (col == 0 || col == 7) {
@@ -167,7 +192,7 @@ public class BoardPrinter {
             out.print(SET_TEXT_COLOR_BLACK);
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (col % 2 == 0) {
-                    brownSquare(out);
+                    greySquare(out);
                 } else {
                     greenSquare(out);
                 }
@@ -192,7 +217,7 @@ public class BoardPrinter {
         if (boardRow == 1) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (col % 2 == 0) {
-                    brownSquare(out);
+                    greySquare(out);
                 } else {
                     greenSquare(out);
                 }
@@ -204,7 +229,7 @@ public class BoardPrinter {
                 if (col % 2 == 0) {
                     greenSquare(out);
                 } else {
-                    brownSquare(out);
+                    greySquare(out);
                 }
 
                 out.print(BLACK_PAWN);
@@ -217,7 +242,7 @@ public class BoardPrinter {
         if (boardRow == 1) {
             for (int col = 0; col < BOARD_SIZE_IN_SQUARES; col++) {
                 if (col % 2 == 0) {
-                    brownSquare(out);
+                    greySquare(out);
                 } else {
                     greenSquare(out);
                 }
@@ -229,7 +254,7 @@ public class BoardPrinter {
                 if (col % 2 == 0) {
                     greenSquare(out);
                 } else {
-                    brownSquare(out);
+                    greySquare(out);
                 }
 
                 out.print(BLACK_PAWN);
@@ -246,7 +271,7 @@ public class BoardPrinter {
         out.print(SET_BG_COLOR_GREEN);
     }
 
-    private static void brownSquare(PrintStream out) {
+    private static void greySquare(PrintStream out) {
         out.print(SET_BG_COLOR_LIGHT_GREY);
     }
 
