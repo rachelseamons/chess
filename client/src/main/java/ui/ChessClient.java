@@ -3,7 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
-import server.JoinRequest;
+import model.JoinRequest;
 import serverfacade.ServerFacade;
 
 import java.util.Arrays;

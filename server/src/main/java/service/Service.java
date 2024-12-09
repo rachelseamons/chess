@@ -4,7 +4,7 @@ import dataaccess.DataAccess;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import server.JoinRequest;
+import model.JoinRequest;
 
 import java.util.Set;
 

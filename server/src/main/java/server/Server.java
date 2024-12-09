@@ -2,9 +2,9 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
-import dataaccess.MemoryDataAccess;
 import dataaccess.SQLDataAccess;
 import model.GameData;
+import model.JoinRequest;
 import model.UserData;
 import org.mindrot.jbcrypt.BCrypt;
 import service.ChessException;

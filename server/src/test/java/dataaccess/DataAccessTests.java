@@ -8,7 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import server.JoinRequest;
+import model.JoinRequest;
 import service.ChessException;
 
 import java.util.HashSet;

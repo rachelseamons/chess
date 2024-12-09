@@ -4,7 +4,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
-import server.JoinRequest;
+import model.JoinRequest;
 import server.Server;
 import serverfacade.ServerFacade;
 

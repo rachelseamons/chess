@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mindrot.jbcrypt.BCrypt;
-import server.JoinRequest;
+import model.JoinRequest;
 
 import java.util.HashSet;
 import java.util.Set;
