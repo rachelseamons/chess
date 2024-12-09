@@ -3,6 +3,7 @@ package ui;
 import exception.ResponseException;
 import model.GameData;
 import model.UserData;
+import server.JoinRequest;
 import server.ServerFacade;
 
 import java.util.Arrays;
@@ -11,7 +12,6 @@ import java.util.Map;
 
 public class ChessClient {
     private final ServerFacade server;
-    private final String serverUrl;
 
     private State state = State.LOGGEDOUT;
     private String authToken;
@@ -19,8 +19,6 @@ public class ChessClient {
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
-
     }
 
     public String eval(String input) {
@@ -30,20 +28,75 @@ public class ChessClient {
             var cmd = (tokens.length > 0) ? tokens[0] : "help";
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                //TODO:: remove print option
-                case "print" -> printTest();
+                case "observe" -> observeGame(params);
+                case "join" -> joinGame(params);
                 case "list" -> listGames();
                 case "create" -> createGame(params);
                 case "login" -> loginUser(params);
                 case "logout" -> logoutUser();
                 case "register" -> registerUser(params);
                 case "help" -> help();
-                case "quit" -> "quit"; //TODO:: might need to change state or smthg here
+                case "quit" -> "quit";
                 default -> "Error: type \"help\" for available commands";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
+    }
+
+    public String observeGame(String... param) throws ResponseException {
+        if (param.length == 1) {
+            assertSignedIn();
+            updateGames();
+            var gameNumber = param[0];
+            var gameNumberInt = Integer.parseInt(gameNumber);
+            if (!games.containsKey(gameNumberInt)) {
+                throw new ResponseException(400, "Error: game ID does not exist");
+            }
+            var printer = new BoardPrinter(true);
+            printer.print();
+            return "";
+            //if I were to be continuing this project, I would add a map at this level
+            //that tracks all the observers for each game (Map<Integer, Set<String>> observers).
+        }
+        throw new ResponseException(400, "Error: expected <gameID>");
+    }
+
+    public String joinGame(String... params) throws ResponseException {
+        if (params.length == 2) {
+            assertSignedIn();
+            updateGames();
+            var gameNumber = params[0];
+            var gameNumberInt = Integer.parseInt(gameNumber);
+            if (!games.containsKey(gameNumberInt)) {
+                throw new ResponseException(400, "Error: game ID does not exist");
+            }
+            var playerColor = params[1];
+            playerColor = playerColor.toUpperCase();
+
+            var gameID = games.get(gameNumberInt).gameID();
+            var request = new JoinRequest(playerColor, gameID);
+            try {
+                server.joinGame(authToken, request);
+                updateGames();
+
+                if (playerColor.equals("WHITE")) {
+                    var printer = new BoardPrinter(true);
+                    printer.print();
+                } else {
+                    var printer = new BoardPrinter(false);
+                    printer.print();
+                }
+                return "";
+            } catch (ResponseException ex) {
+                switch (ex.getStatusCode()) {
+                    case 400 -> throw new ResponseException(400, "Error: expected <gameID> [WHITE|BLACK]");
+                    case 401 -> throw new ResponseException(401, "Error: not logged in");
+                    case 403 -> throw new ResponseException(403, "Error: player color already taken");
+                }
+            }
+        }
+        throw new ResponseException(400, "Error: expected <gameID> [WHITE|BLACK]");
     }
 
     public String listGames() throws ResponseException {
@@ -194,24 +247,34 @@ public class ChessClient {
         try {
             Map<Integer, GameData> updatedGames = new HashMap<>();
             var retrievedGames = server.listGames(authToken);
-            int i = 1;
-            for (GameData game : retrievedGames) {
-                updatedGames.put(i, game);
-                i = i + 1;
+            if (games.isEmpty()) {
+                int i = 1;
+                for (GameData game : retrievedGames) {
+                    updatedGames.put(i, game);
+                    i = i + 1;
+                }
+                games = updatedGames;
+            } else {
+                int i = games.size() + 1;
+                for (GameData updatedGame : retrievedGames) {
+                    boolean gameMatched = false;
+                    for (Integer oldGame : games.keySet()) {
+                        if (updatedGame.gameID() == games.get(oldGame).gameID()) {
+                            games.put(oldGame, updatedGame);
+                            gameMatched = true;
+                        }
+                    }
+                    if (!gameMatched) {
+                        updatedGames.put(i, updatedGame);
+                    }
+                }
+
+                for (Integer gameNumber : updatedGames.keySet()) {
+                    games.put(gameNumber, updatedGames.get(gameNumber));
+                }
             }
-            games = updatedGames;
         } catch (ResponseException ex) {
             throw new ResponseException(500, "Error: could not get games");
         }
-    }
-
-    private void printBoardWhite() throws ResponseException {
-
-    }
-
-    private String printTest() throws ResponseException {
-        var printer = new BoardPrinter(true);
-        printer.print();
-        return "";
     }
 }
