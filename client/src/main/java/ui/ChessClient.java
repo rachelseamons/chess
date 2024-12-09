@@ -23,9 +23,9 @@ public class ChessClient {
 
     public String eval(String input) {
         try {
-            var tokens = input.toLowerCase().split(" ");
-            //if length > 0, sets cmd to tokens[0]; else sets it to "help"
-            var cmd = (tokens.length > 0) ? tokens[0] : "help";
+            var tokens = input.split(" ");
+            tokens[0] = tokens[0].toLowerCase();
+            var cmd = tokens[0];
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "observe" -> observeGame(params);
@@ -48,7 +48,14 @@ public class ChessClient {
         if (param.length == 1) {
             assertSignedIn();
             updateGames();
+
             var gameNumber = param[0];
+            for (int i = 0; i < gameNumber.length(); i++) {
+                if (!Character.isDigit(gameNumber.charAt(i))) {
+                    throw new ResponseException(400, "Error: game ID does not exist");
+                }
+            }
+
             var gameNumberInt = Integer.parseInt(gameNumber);
             if (!games.containsKey(gameNumberInt)) {
                 throw new ResponseException(400, "Error: game ID does not exist");
@@ -66,7 +73,14 @@ public class ChessClient {
         if (params.length == 2) {
             assertSignedIn();
             updateGames();
+
             var gameNumber = params[0];
+            for (int i = 0; i < gameNumber.length(); i++) {
+                if (!Character.isDigit(gameNumber.charAt(i))) {
+                    throw new ResponseException(400, "Error: game ID does not exist");
+                }
+            }
+
             var gameNumberInt = Integer.parseInt(gameNumber);
             if (!games.containsKey(gameNumberInt)) {
                 throw new ResponseException(400, "Error: game ID does not exist");
@@ -192,7 +206,7 @@ public class ChessClient {
                 switch (ex.getStatusCode()) {
                     case 400 -> throw new ResponseException(400, "Error: expected <username> <password> <email>");
                     case 403 -> throw new ResponseException(403, "Error: username already taken");
-                    case 500 -> throw new ResponseException(500, "Error: try again");
+                    case 500 -> throw new ResponseException(500, "Error: username, password, or email is too long");
                 }
             }
         }

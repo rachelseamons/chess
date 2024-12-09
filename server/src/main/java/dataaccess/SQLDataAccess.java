@@ -59,7 +59,7 @@ public class SQLDataAccess implements DataAccess {
             if (ex.getMessage().startsWith("Duplicate entry")) {
                 throw new ChessException("already taken", 403);
             } else {
-                throw new ChessException("unknown dataAccess error", 45);
+                throw new ChessException("input too long", 500);
             }
         }
         return new UserData(user.username(), null, user.email());
@@ -79,7 +79,7 @@ public class SQLDataAccess implements DataAccess {
                 ps.executeUpdate();
             }
         } catch (Exception ex) {
-            throw new ChessException("unknown dataAccess error", 45);
+            throw new ChessException("input too long", 500);
         }
         return new AuthData(authToken, username);
     }
