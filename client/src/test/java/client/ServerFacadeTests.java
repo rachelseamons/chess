@@ -4,6 +4,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.*;
+import server.JoinRequest;
 import server.Server;
 import server.ServerFacade;
 
@@ -280,6 +281,66 @@ public class ServerFacadeTests {
         String expectedMessage = "failure: 401";
         String actualMessage = exception.getMessage();
         int expectedStatus = 401;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("join game success")
+    public void joinGameSuccess() throws Exception {
+        var newUser = createTestUser();
+        var newGame = createTestGame();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var createdGame = serverFacade.createGame(registeredUser.authToken(), newGame);
+
+        var request = new JoinRequest("WHITE", createdGame.gameID());
+        serverFacade.joinGame(registeredUser.authToken(), request);
+
+        var returnedGames = serverFacade.listGames(registeredUser.authToken());
+        for (GameData game : returnedGames) {
+            if (game.gameID() == createdGame.gameID()) {
+                Assertions.assertEquals(registeredUser.username(), game.whiteUsername());
+            }
+        }
+    }
+
+    @Test
+    @DisplayName("fail to join when player color is already taken")
+    public void failJoinAlreadyTaken() throws Exception {
+        var newUser = createTestUser();
+        var newGame = createTestGame();
+        var registeredUser = serverFacade.registerUser(newUser);
+        var createdGame = serverFacade.createGame(registeredUser.authToken(), newGame);
+
+        var request = new JoinRequest("WHITE", createdGame.gameID());
+        serverFacade.joinGame(registeredUser.authToken(), request);
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.joinGame(registeredUser.authToken(), request));
+
+        String expectedMessage = "failure: 403";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 403;
+        int actualStatus = exception.getStatusCode();
+
+        Assertions.assertEquals(expectedMessage, actualMessage);
+        Assertions.assertEquals(expectedStatus, actualStatus);
+    }
+
+    @Test
+    @DisplayName("fail to join with wrong gameID")
+    public void joinGameWrongID() throws Exception {
+        var newUser = createTestUser();
+        var registeredUser = serverFacade.registerUser(newUser);
+
+        var request = new JoinRequest("WHITE", 236);
+        ResponseException exception = Assertions.assertThrows(ResponseException.class,
+                () -> serverFacade.joinGame(registeredUser.authToken(), request));
+
+        String expectedMessage = "failure: 400";
+        String actualMessage = exception.getMessage();
+        int expectedStatus = 400;
         int actualStatus = exception.getStatusCode();
 
         Assertions.assertEquals(expectedMessage, actualMessage);

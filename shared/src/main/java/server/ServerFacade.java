@@ -50,6 +50,11 @@ public class ServerFacade {
         return response.games;
     }
 
+    public void joinGame(String authToken, JoinRequest request) throws ResponseException {
+        var path = "/game";
+        this.makeRequest("PUT", path, request, authToken, null);
+    }
+
     public void clear() throws ResponseException {
         var path = "/db";
         this.makeRequest("DELETE", path, null, null, null);
