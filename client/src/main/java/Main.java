@@ -1,4 +1,3 @@
-import chess.*;
 import ui.Repl;
 
 import server.Server;

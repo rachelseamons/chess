@@ -49,7 +49,7 @@ public class ServerFacadeTests {
 
     @Test
     @DisplayName("register user bad request")
-    public void registerUserBad() throws ResponseException {
+    public void registerUserBad() {
         var badUser = new UserData(null, null, null);
         ResponseException exception = Assertions.assertThrows(ResponseException.class,
                 () -> serverFacade.registerUser(badUser));
