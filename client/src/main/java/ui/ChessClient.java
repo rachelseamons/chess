@@ -4,7 +4,7 @@ import exception.ResponseException;
 import model.GameData;
 import model.UserData;
 import server.JoinRequest;
-import server.ServerFacade;
+import serverfacade.ServerFacade;
 
 import java.util.Arrays;
 import java.util.HashMap;
